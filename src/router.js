@@ -18,9 +18,9 @@ export const router = new Router({
             component:() => import('./ErrorPage/ErrorPage.vue')
         },
         {
-            path:'/MainFormPage',
-            name:'MainFormPage' ,
-            component:() => import('./components/CommonComponents/MainFormPage')
+            path:'/AddProductPage',
+            name:'AddProductPage' ,
+            component:() => import('./components/CommonComponents/addProductPage')
         }
     ]
 });
