@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!test-->
     <!--上面**各項選單項目新增-->
     <NavBarMenu></NavBarMenu>
     <!--左邊**各項選單項目新增-->
