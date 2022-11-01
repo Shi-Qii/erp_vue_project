@@ -91,9 +91,9 @@
                         sort-icon-left
                         responsive="sm"
                     >
-                      <template #cell(isActive)="row">
-                        <b-form-checkbox v-model="row.isActive" switch>
-                          <b> ({{ row.isActive ? '上架' : '下架' }})</b>
+                      <template #cell(isActive)="data">
+                        <b-form-checkbox v-model="data.item.isActive" switch>
+                          <b> ({{ data.item.isActive ? '上架' : '下架' }})</b>
                         </b-form-checkbox>
                         </template>
                     </b-table>
@@ -144,7 +144,7 @@ export default {
     const isActive = ref(true);
 
     const tableObj = reactive({
-      'items': [{isActive: isActive, color: '黑色', size: 'F', ManufacturerNo: '1253',cost:'200',price:500,selfNo:'123456789',brandNo:'123456789'}],
+      'items': [{isActive: isActive.value, color: '黑色', size: 'F', ManufacturerNo: '1253',cost:'200',price:500,selfNo:'123456789',brandNo:'123456789'}],
       'fields': [
         {label: '顏色', key: 'color', sortable: true},
         {label: '尺寸', key: 'size', sortable: true},
