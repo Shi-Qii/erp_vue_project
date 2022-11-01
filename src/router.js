@@ -4,23 +4,24 @@ import Home from './HomePage/home.vue';
 
 Vue.use(Router);
 
+let dominName='/keepGoingVue/'
 export const router = new Router({
     mode: 'history',
     routes:[
         {
-            path:'/ProjectHome',
+            path:dominName+'ProjectHome',
             name:'HomePage' ,
             component: Home
         },
         {
-            path:'/ErrorPage',
+            path:dominName+'ErrorPage',
             name:'ErrorPage' ,
             component:() => import('./ErrorPage/ErrorPage.vue')
         },
         {
-            path:'/AddProductPage',
-            name:'AddProductPage' ,
-            component:() => import('./components/CommonComponents/addProductPage')
+            path:dominName+'UpsertProductPage',
+            name:'UpsertProductPage' ,
+            component:() => import('./components/CommonComponents/upsertProductPage')
         }
     ]
 });

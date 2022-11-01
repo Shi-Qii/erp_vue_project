@@ -19,7 +19,7 @@
                   <label>狀態</label>
                   <div class="pl-3 pt-2">
                     <b-form-checkbox v-model="checked" name="check-button" switch>
-                      商品狀態 <b>(狀態: {{ checked ? '上架' : '下架' }})</b>
+                      商品狀態 <b> (狀態: {{ checked ? '上架' : '下架' }})</b>
                     </b-form-checkbox>
                   </div>
 
@@ -73,7 +73,7 @@
                 <div class="form-group">
                   <label>規格樣式</label>
                   <div>
-                    <b-button variant="outline-secondary" @click="addRow()" >單筆新增</b-button>
+                    <b-button variant="outline-secondary" @click="addRow()">單筆新增</b-button>
                     <b-button variant="outline-secondary" class="ml-2">批次新增</b-button>
                   </div>
                 </div>
@@ -90,7 +90,13 @@
                         :sort-desc.sync="tableObj.sortDesc"
                         sort-icon-left
                         responsive="sm"
-                    ></b-table>
+                    >
+                      <template #cell(isActive)="row">
+                        <b-form-checkbox v-model="row.isActive" switch>
+                          <b> ({{ row.isActive ? '上架' : '下架' }})</b>
+                        </b-form-checkbox>
+                        </template>
+                    </b-table>
                     <div>
                       Sorting By: <b>{{ tableObj.sortBy }}</b>, Sort Direction:
                       <b>{{ tableObj.sortDesc ? 'Descending' : 'Ascending' }}</b>
@@ -101,14 +107,22 @@
             </div>
 
 
-              <div style="text-align:center" class="mt-3">
-                <div >
-                  <div>
-                    <b-button variant="info">列印條碼</b-button>
-                    <b-button variant="outline-info" class="ml-2">新增商品</b-button>
-                  </div>
+            <div style="text-align:center" class="mt-3">
+              <div>
+                <div>
+                  <b-button variant="info" @click="printModal">列印條碼</b-button>
+                  <b-button variant="outline-info" class="ml-2">新增商品</b-button>
+
+                  <b-modal ref="print-modal" hide-footer title="請填寫標籤數量">
+                    <div class="d-block text-center">
+                      <h3>Hello From My Modal!</h3>
+                    </div>
+                    <b-button class="mt-2" variant="outline-warning" block @click="print">列印</b-button>
+                  </b-modal>
+
                 </div>
               </div>
+            </div>
 
 
           </form>
@@ -126,19 +140,21 @@ export default {
   name: "MainFormPage",
   setup() {
     const tagsValue = ref(['男生上衣', '個性', '襯衫']);
-    const checked = ref(false);
+    const checked = ref(true);
+    const isActive = ref(true);
 
     const tableObj = reactive({
-      'items': [{isActive: true, color: '黑色', size: 'F', ManufacturerNo: '1253',cost:'200',price:500,selfNo:'123456789',brandNo:'123456789'}],
+      'items': [{isActive: isActive, color: '黑色', size: 'F', ManufacturerNo: '1253',cost:'200',price:500,selfNo:'123456789',brandNo:'123456789'}],
       'fields': [
-        {label:'顏色',key: 'color', sortable: true},
-        {label:'尺寸',key: '', sortable: true},
-        {label:'廠商編號',key: 'ManufacturerNo', sortable: true},
-        {label:'成本',key: 'cost', sortable: true},
-        {label:'售價',key: 'price', sortable: true},
-        {label:'規格編號',key: 'selfNo', sortable: false},
-        {label:'條碼編號',key: 'brandNo', sortable: false},
-        {label:'狀態',key: 'isActive', sortable: false}
+        {label: '顏色', key: 'color', sortable: true},
+        {label: '尺寸', key: 'size', sortable: true},
+        {label: '廠商編號', key: 'ManufacturerNo', sortable: true},
+        {label: '成本', key: 'cost', sortable: true},
+        {label: '售價', key: 'price', sortable: true},
+        {label: '內部編號', key: 'selfNo', sortable: false},
+        {label: '條碼編號', key: 'brandNo', sortable: false},
+        {label: '狀態', key: 'isActive', sortable: false},
+        {label: '刪除', key: 'isDelete', sortable: false}
       ],
       'sortBy': 'age',
       'sortDesc': false
@@ -150,7 +166,16 @@ export default {
       )
     }
     return {tagsValue, checked, tableObj, addRow}
+  },
+
+
+  methods: {
+    printModal() {
+      this.$refs['print-modal'].show()
+    }
   }
+
+
 }
 </script>
 

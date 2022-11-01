@@ -37,7 +37,7 @@ export default {
           'toPath': 'ProjectHome1'
         }, {
           'name': '新增品項頁面',
-          'toPath': 'AddProductPage'
+          'toPath': 'UpsertProductPage'
         }])
 
     return {routerList}
