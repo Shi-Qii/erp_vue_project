@@ -134,9 +134,27 @@
                   <b-button variant="outline-info" class="ml-2">新增商品</b-button>
 
                   <b-modal ref="print-modal" hide-footer title="請填寫標籤數量">
-                    <div class="d-block text-center">
-                      <h3>Hello From My Modal!</h3>
-                    </div>
+<!--                      <b-container fluid>-->
+                        <b-row v-for="(item,index) in tableObj.items" :key="index" >
+                          <b-col>
+                            {{item.color}}
+                          </b-col>
+                          <b-col>
+                            {{item.size}}
+                          </b-col>
+                          <b-col>
+                            {{item.price}}
+                          </b-col>
+                          <b-col>
+                            {{item.selfNo}}
+                          </b-col>
+                          <b-col>
+                            <b-input-group size="sm" >
+                              <b-form-input  placeholder="0" class="text-right"></b-form-input>
+                            </b-input-group>
+                          </b-col>
+                        </b-row>
+<!--                      </b-container>-->
                     <b-button class="mt-2" variant="outline-warning" block @click="print">列印</b-button>
                   </b-modal>
 
@@ -159,13 +177,13 @@
 <script>
 // import {reactive} from "@vue/composition-api";
 import {reactive, ref} from "@vue/composition-api/dist/vue-composition-api";
-import VueBarcode from 'vue-barcode';
+// import VueBarcode from 'vue-barcode';
 
 export default {
   name: "MainFormPage",
-  components: {
-    'barcode': VueBarcode
-  },
+  // components: {
+  //   'barcode': VueBarcode
+  // },
   setup() {
     // const dataObj = ref({
     //   dataItems: [{
@@ -206,7 +224,7 @@ export default {
         ManufacturerNo: '1253',
         cost: '200',
         price: 500,
-        selfNo: '123456789',
+        selfNo: 'a123456789',
         brandNo: '123456789',
         inStock: false
       }, {
@@ -216,7 +234,7 @@ export default {
         ManufacturerNo: '1253',
         cost: '200',
         price: 500,
-        selfNo: '123456789',
+        selfNo: 'b123456789',
         brandNo: '123456789',
         inStock: true
       }],
