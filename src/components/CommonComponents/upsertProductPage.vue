@@ -126,6 +126,9 @@
 
 
           </form>
+          <input v-model="barcodeValue" /><br>
+          <barcode v-bind:value="barcodeValue" format="CODE39" width="1.5" height="35">
+          </barcode>
         </div>
       </div>
     </div>
@@ -135,13 +138,18 @@
 
 <script>
 import {reactive, ref} from "@vue/composition-api/dist/vue-composition-api";
+import VueBarcode from 'vue-barcode';
 
 export default {
   name: "MainFormPage",
+  components: {
+    'barcode': VueBarcode
+  },
   setup() {
     const tagsValue = ref(['男生上衣', '個性', '襯衫']);
     const checked = ref(true);
     const isActive = ref(true);
+    const barcodeValue = ref('CODE39 Barcode');
 
     const tableObj = reactive({
       'items': [{isActive: isActive.value, color: '黑色', size: 'F', ManufacturerNo: '1253',cost:'200',price:500,selfNo:'123456789',brandNo:'123456789'}],
@@ -165,7 +173,7 @@ export default {
       tableObj.items.push({isActive: true, color: '白色', size: 'F', ManufacturerNo: '1253',cost:'200',price:500,selfNo:'223456702',brandNo:'223456702'}
       )
     }
-    return {tagsValue, checked, tableObj, addRow}
+    return {tagsValue, checked, tableObj, addRow,barcodeValue}
   },
 
 
