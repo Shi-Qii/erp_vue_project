@@ -71,10 +71,23 @@
             <div class="row mt-3">
               <div class="col-12 pr-1">
                 <div class="form-group">
-                  <label>規格樣式</label>
+                  <label></label>
                   <div>
                     <b-button variant="outline-secondary" @click="addRow()">單筆新增</b-button>
-                    <b-button variant="outline-secondary" class="ml-2">批次新增</b-button>
+                    <b-button variant="outline-secondary" class="ml-2" @click="newItem()">新增規格</b-button>
+
+                    <b-modal ref="newItem-modal" hide-footer title="新增規格">
+                      <div id="editSize" class="mt-2">
+                        <h5>尺寸</h5>
+                      </div>
+                      <div  id="editColor" class="mt-2">
+                        <h5>顏色</h5>
+                      </div>
+                      <div id="editResult" class="mt-2">
+                        <h5>結果</h5>
+                      </div>
+                      <b-button class="mt-2" variant="outline-warning" block @click="addItem()">確定新增</b-button>
+                    </b-modal>
                   </div>
                 </div>
               </div>
@@ -95,7 +108,14 @@
                         <b-form-checkbox v-model="data.item.isActive" switch>
                           <b> ({{ data.item.isActive ? '上架' : '下架' }})</b>
                         </b-form-checkbox>
-                        </template>
+                      </template>
+                      <template #cell(isDelete)="data" >
+                        <b-form-checkbox v-model="data.item.isDelete" v-if="data.item.inStock===false">
+                        </b-form-checkbox>
+                      </template>
+                      <template #cell(ManufacturerNo)="data" >
+                        <input v-model="data.item.ManufacturerNo">
+                      </template>
                     </b-table>
                     <div>
                       Sorting By: <b>{{ tableObj.sortBy }}</b>, Sort Direction:
@@ -126,7 +146,7 @@
 
 
           </form>
-          <input v-model="barcodeValue" /><br>
+          <input v-model="barcodeValue"/><br>
           <barcode v-bind:value="barcodeValue" format="CODE39" width="1.5" height="35">
           </barcode>
         </div>
@@ -137,6 +157,7 @@
 </template>
 
 <script>
+// import {reactive} from "@vue/composition-api";
 import {reactive, ref} from "@vue/composition-api/dist/vue-composition-api";
 import VueBarcode from 'vue-barcode';
 
@@ -146,13 +167,59 @@ export default {
     'barcode': VueBarcode
   },
   setup() {
+    // const dataObj = ref({
+    //   dataItems: [{
+    //     checked: true,
+    //     startNum:0
+    //     list: [{
+    //       isActive: true,
+    //       color: '黑色',
+    //       size: 'F',
+    //       ManufacturerNo: '1253',
+    //       cost: '200',
+    //       price: 500,
+    //       selfNo: '123456789',
+    //       brandNo: '123456789',
+    //       inStock: false
+    //     }, {
+    //       isActive: false,
+    //       color: '黑色',
+    //       size: 'F',
+    //       ManufacturerNo: '1253',
+    //       cost: '200',
+    //       price: 500,
+    //       selfNo: '123456789',
+    //       brandNo: '123456789',
+    //       inStock: true
+    //     }]
+    //   }]
+    // })
     const tagsValue = ref(['男生上衣', '個性', '襯衫']);
     const checked = ref(true);
-    const isActive = ref(true);
     const barcodeValue = ref('CODE39 Barcode');
 
     const tableObj = reactive({
-      'items': [{isActive: isActive.value, color: '黑色', size: 'F', ManufacturerNo: '1253',cost:'200',price:500,selfNo:'123456789',brandNo:'123456789'}],
+      'items': [{
+        isActive: true,
+        color: '黑色',
+        size: 'F',
+        ManufacturerNo: '1253',
+        cost: '200',
+        price: 500,
+        selfNo: '123456789',
+        brandNo: '123456789',
+        inStock: false
+      }, {
+        isActive: false,
+        color: '黑色',
+        size: 'F',
+        ManufacturerNo: '1253',
+        cost: '200',
+        price: 500,
+        selfNo: '123456789',
+        brandNo: '123456789',
+        inStock: true
+      }],
       'fields': [
         {label: '顏色', key: 'color', sortable: true},
         {label: '尺寸', key: 'size', sortable: true},
@@ -170,16 +237,29 @@ export default {
     })
     const addRow = () => {
       //後面補上畫面輸入匡對應回來物件，從這裡推近table
-      tableObj.items.push({isActive: true, color: '白色', size: 'F', ManufacturerNo: '1253',cost:'200',price:500,selfNo:'223456702',brandNo:'223456702'}
+      tableObj.items.push({
+            isActive: true,
+            color: '白色',
+            size: 'F',
+            ManufacturerNo: '1253',
+            cost: '200',
+            price: 500,
+            selfNo: '223456702',
+            brandNo: '223456702',
+            inStock: false
+          }
       )
     }
-    return {tagsValue, checked, tableObj, addRow,barcodeValue}
+    return {tagsValue, checked, tableObj, addRow, barcodeValue}
   },
 
 
   methods: {
     printModal() {
       this.$refs['print-modal'].show()
+    },
+    newItem() {
+      this.$refs['newItem-modal'].show()
     }
   }
 
