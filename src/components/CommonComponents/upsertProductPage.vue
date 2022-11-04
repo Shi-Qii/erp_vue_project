@@ -53,9 +53,8 @@
                       </b-input-group>
                       <div class=" " style="font-size: 1.5rem;">
                         <b-form-tag
-                            v-for="tag in tags"
+                            v-for="(tag,index) in tags" :key="index+'_'"
                             @remove="removeTag(tag)"
-                            :key="tag"
                             :title="tag"
                             variant="secondary"
                             class="mr-1"
@@ -80,7 +79,7 @@
                       <div id="editSize" class="mt-2">
                         <h5>尺寸</h5>
                       </div>
-                      <div  id="editColor" class="mt-2">
+                      <div id="editColor" class="mt-2">
                         <h5>顏色</h5>
                       </div>
                       <div id="editResult" class="mt-2">
@@ -109,17 +108,16 @@
                           <b> ({{ data.item.isActive ? '上架' : '下架' }})</b>
                         </b-form-checkbox>
                       </template>
-                      <template #cell(isDelete)="data" >
+                      <template #cell(isDelete)="data">
                         <b-form-checkbox v-model="data.item.isDelete" v-if="data.item.inStock===false">
                         </b-form-checkbox>
                       </template>
-                      <template #cell(ManufacturerNo)="data" >
+                      <template #cell(ManufacturerNo)="data">
                         <input v-model="data.item.ManufacturerNo">
                       </template>
                     </b-table>
                     <div>
-                      Sorting By: <b>{{ tableObj.sortBy }}</b>, Sort Direction:
-                      <b>{{ tableObj.sortDesc ? 'Descending' : 'Ascending' }}</b>
+
                     </div>
                   </div>
                 </div>
@@ -130,32 +128,33 @@
             <div style="text-align:center" class="mt-3">
               <div>
                 <div>
-                  <b-button variant="info" @click="printModal">列印條碼</b-button>
+                  <b-button v-b-modal.print-modal>列印條碼</b-button>
                   <b-button variant="outline-info" class="ml-2">新增商品</b-button>
 
-                  <b-modal ref="print-modal" hide-footer title="請填寫標籤數量">
-<!--                      <b-container fluid>-->
-                        <b-row v-for="(item,index) in tableObj.items" :key="index" >
-                          <b-col>
-                            {{item.color}}
-                          </b-col>
-                          <b-col>
-                            {{item.size}}
-                          </b-col>
-                          <b-col>
-                            {{item.price}}
-                          </b-col>
-                          <b-col>
-                            {{item.selfNo}}
-                          </b-col>
-                          <b-col>
-                            <b-input-group size="sm" >
-                              <b-form-input  placeholder="0" class="text-right"></b-form-input>
-                            </b-input-group>
-                          </b-col>
-                        </b-row>
-<!--                      </b-container>-->
-                    <b-button class="mt-2" variant="outline-warning" block @click="print">列印</b-button>
+                  <b-modal size="lg" id="print-modal" hide-footer title="請填寫標籤數量">
+                    <h5>{{ dataObj.dataItems.productId }} - {{ dataObj.dataItems.productName }}</h5>
+                    <h5></h5>
+                    <b-table
+                        :items="tableObj.items"
+                        :fields="brandTableObj.fields"
+                        sort-icon-left
+                        responsive="sm"
+                    >
+                      <template #cell(printNum)>
+                        <b-form-input
+                            placeholder="num"
+                            trim
+                            v-model="name"
+                            aria-describedby="input-live-help input-live-feedback"
+                            :state="nameState"
+                        ></b-form-input>
+                        <b-form-invalid-feedback id="input-live-feedback">
+                          Enter at least 3 letters
+                        </b-form-invalid-feedback>
+                        <b-form-text id="input-live-help">Your full name.</b-form-text>
+                      </template>
+                    </b-table>
+                    <b-button class="mt-2" variant="outline-warning" block>列印</b-button>
                   </b-modal>
 
                 </div>
@@ -175,69 +174,57 @@
 </template>
 
 <script>
-// import {reactive} from "@vue/composition-api";
-import {reactive, ref} from "@vue/composition-api/dist/vue-composition-api";
-// import VueBarcode from 'vue-barcode';
+import {computed, reactive, ref} from "@vue/composition-api/dist/vue-composition-api";
+import VueBarcode from 'vue-barcode';
 
 export default {
   name: "MainFormPage",
-  // components: {
-  //   'barcode': VueBarcode
-  // },
+  components: {
+    'barcode': VueBarcode
+  },
   setup() {
-    // const dataObj = ref({
-    //   dataItems: [{
-    //     checked: true,
-    //     startNum:0
-    //     list: [{
-    //       isActive: true,
-    //       color: '黑色',
-    //       size: 'F',
-    //       ManufacturerNo: '1253',
-    //       cost: '200',
-    //       price: 500,
-    //       selfNo: '123456789',
-    //       brandNo: '123456789',
-    //       inStock: false
-    //     }, {
-    //       isActive: false,
-    //       color: '黑色',
-    //       size: 'F',
-    //       ManufacturerNo: '1253',
-    //       cost: '200',
-    //       price: 500,
-    //       selfNo: '123456789',
-    //       brandNo: '123456789',
-    //       inStock: true
-    //     }]
-    //   }]
-    // })
+    const newItem = function () {
+      this.$refs['newItem-modal'].show()
+    }
+    const name = ref('')
+    const dataObj = reactive({
+      dataItems: {
+        productName: "上衣",
+        productId: "0123456789",
+        checked: true,
+        startNum: 0,
+        list: [{
+          isActive: true,
+          color: '黑色',
+          size: 'F',
+          ManufacturerNo: '1253',
+          cost: '200',
+          price: 500,
+          selfNo: '123456789',
+          brandNo: '123456789',
+          inStock: false
+        }, {
+          isActive: false,
+          color: '黑色',
+          size: 'F',
+          ManufacturerNo: '1253',
+          cost: '200',
+          price: 500,
+          selfNo: '123456789',
+          brandNo: '123456789',
+          inStock: true
+        }]
+      }
+    })
+    const nameState = computed({
+      get: () => name.value.length > 2 ? true : false,
+    })
     const tagsValue = ref(['男生上衣', '個性', '襯衫']);
-    const checked = ref(true);
+    const checked = ref(dataObj.dataItems.checked);
     const barcodeValue = ref('CODE39 Barcode');
 
     const tableObj = reactive({
-      'items': [{
-        isActive: true,
-        color: '黑色',
-        size: 'F',
-        ManufacturerNo: '1253',
-        cost: '200',
-        price: 500,
-        selfNo: 'a123456789',
-        brandNo: '123456789',
-        inStock: false
-      }, {
-        isActive: false,
-        color: '黑色',
-        size: 'F',
-        ManufacturerNo: '1253',
-        cost: '200',
-        price: 500,
-        selfNo: 'b123456789',
-        brandNo: '123456789',
-        inStock: true
-      }],
+      'items': dataObj.dataItems.list,
       'fields': [
         {label: '顏色', key: 'color', sortable: true},
         {label: '尺寸', key: 'size', sortable: true},
@@ -253,6 +240,7 @@ export default {
       'sortDesc': false
 
     })
+
     const addRow = () => {
       //後面補上畫面輸入匡對應回來物件，從這裡推近table
       tableObj.items.push({
@@ -262,24 +250,30 @@ export default {
             ManufacturerNo: '1253',
             cost: '200',
             price: 500,
-            selfNo: '223456702',
-            brandNo: '223456702',
+            selfNo: '2',
+            brandNo: '0',
             inStock: false
           }
       )
     }
-    return {tagsValue, checked, tableObj, addRow, barcodeValue}
+    const brandTableObj = reactive({
+      'fields': [
+        {label: '顏色', key: 'color', sortable: true},
+        {label: '尺寸', key: 'size', sortable: true},
+        {label: '售價', key: 'price', sortable: true},
+        {label: '內部編號', key: 'selfNo', sortable: false},
+        {label: '條碼編號', key: 'brandNo', sortable: false},
+        {label: '狀態', key: 'isActive', sortable: false},
+        {label: '列印張數', key: 'printNum', sortable: false}
+      ],
+      'sortBy': 'age',
+      'sortDesc': false
+
+    })
+
+
+    return {tagsValue, checked, tableObj, addRow, barcodeValue, brandTableObj, dataObj, name, nameState, newItem}
   },
-
-
-  methods: {
-    printModal() {
-      this.$refs['print-modal'].show()
-    },
-    newItem() {
-      this.$refs['newItem-modal'].show()
-    }
-  }
 
 
 }
