@@ -102,6 +102,9 @@
                         :sort-desc.sync="tableObj.sortDesc"
                         sort-icon-left
                         responsive="sm"
+                        selectable
+                        @row-selected="onRowSelected"
+
                     >
                       <template #cell(isActive)="data">
                         <b-form-checkbox v-model="data.item.isActive" switch>
@@ -129,7 +132,7 @@
               <div>
                 <div>
                   <b-button v-b-modal.print-modal>列印條碼</b-button>
-                  <b-button variant="outline-info" class="ml-2">新增商品</b-button>
+                  <b-button @click="submit()" variant="outline-info" class="ml-2">新增商品</b-button>
 
                   <b-modal size="lg" id="print-modal" hide-footer title="請填寫標籤數量">
                     <h5>{{ dataObj.dataItems.productId }} - {{ dataObj.dataItems.productName }}</h5>
@@ -139,6 +142,7 @@
                         :fields="brandTableObj.fields"
                         sort-icon-left
                         responsive="sm"
+
                     >
                       <template #cell(printNum)>
                         <b-form-input
@@ -166,6 +170,7 @@
           <input v-model="barcodeValue"/><br>
           <barcode v-bind:value="barcodeValue" format="CODE39" width="1.5" height="35">
           </barcode>
+          {{selected}}
         </div>
       </div>
     </div>
@@ -272,7 +277,18 @@ export default {
     })
 
 
-    return {tagsValue, checked, tableObj, addRow, barcodeValue, brandTableObj, dataObj, brandNum, brandNumState, newItem}
+    const submit = () => {
+
+    }
+    const selected = ref([])
+
+    const onRowSelected = (items) => {
+      console.log('item:',items)
+      selected.value = items
+
+    }
+
+    return {tagsValue, checked, tableObj, addRow, barcodeValue, brandTableObj, dataObj, brandNum, brandNumState, newItem,submit,onRowSelected,selected}
   },
 
 
