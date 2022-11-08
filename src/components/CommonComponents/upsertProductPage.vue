@@ -142,16 +142,16 @@
                     >
                       <template #cell(printNum)>
                         <b-form-input
-                            placeholder="num"
+                            placeholder="列印張數限制1～100"
                             trim
-                            v-model="name"
+                            v-model="brandNum"
                             aria-describedby="input-live-help input-live-feedback"
-                            :state="nameState"
+                            :state="brandNumState"
                         ></b-form-input>
                         <b-form-invalid-feedback id="input-live-feedback">
-                          Enter at least 3 letters
+                          輸入值有誤
                         </b-form-invalid-feedback>
-                        <b-form-text id="input-live-help">Your full name.</b-form-text>
+                        <b-form-text id="input-live-help"></b-form-text>
                       </template>
                     </b-table>
                     <b-button class="mt-2" variant="outline-warning" block>列印</b-button>
@@ -186,7 +186,7 @@ export default {
     const newItem = function () {
       this.$refs['newItem-modal'].show()
     }
-    const name = ref('')
+    const brandNum = ref('0')
     const dataObj = reactive({
       dataItems: {
         productName: "上衣",
@@ -216,8 +216,8 @@ export default {
         }]
       }
     })
-    const nameState = computed({
-      get: () => name.value.length > 2 ? true : false,
+    const brandNumState = computed({
+      get: () => brandNum.value > -1 && brandNum.value<101 ? true : false,
     })
     const tagsValue = ref(['男生上衣', '個性', '襯衫']);
     const checked = ref(dataObj.dataItems.checked);
@@ -272,7 +272,7 @@ export default {
     })
 
 
-    return {tagsValue, checked, tableObj, addRow, barcodeValue, brandTableObj, dataObj, name, nameState, newItem}
+    return {tagsValue, checked, tableObj, addRow, barcodeValue, brandTableObj, dataObj, brandNum, brandNumState, newItem}
   },
 
 
