@@ -170,7 +170,8 @@
           <input v-model="barcodeValue"/><br>
           <barcode v-bind:value="barcodeValue" format="CODE39" width="1.5" height="35">
           </barcode>
-          {{selected}}
+          {{ selected }}
+          {{ dataObj.dataItems.list }}
         </div>
       </div>
     </div>
@@ -179,7 +180,7 @@
 </template>
 
 <script>
-import {computed, reactive, ref} from "@vue/composition-api/dist/vue-composition-api";
+import {computed, reactive, ref, onMounted} from "@vue/composition-api/dist/vue-composition-api";
 import VueBarcode from 'vue-barcode';
 
 export default {
@@ -188,41 +189,50 @@ export default {
     'barcode': VueBarcode
   },
   setup() {
+    onMounted(() => {
+       dataObj.dataItems = {
+         productName: "上衣",
+         productId: "0123456789",
+         checked: true,
+         startNum: 0,
+         list: [{
+           isActive: true,
+           color: '黑色',
+           size: 'F',
+           ManufacturerNo: '1253',
+           cost: '200',
+           price: 500,
+           selfNo: '123456789',
+           brandNo: '123456789',
+           inStock: false
+         }, {
+           isActive: false,
+           color: '黑色',
+           size: 'F',
+           ManufacturerNo: '1253',
+           cost: '200',
+           price: 500,
+           selfNo: '123456789',
+           brandNo: '123456789',
+           inStock: true
+         }]
+       }
+
+    dataObj.dataItems.list.forEach(f=>{
+       f.isDelete = false;
+      })
+    })
+    let dataObj= reactive({dataItems:{list:[]}}) ;
+
     const newItem = function () {
       this.$refs['newItem-modal'].show()
     }
     const brandNum = ref('0')
-    const dataObj = reactive({
-      dataItems: {
-        productName: "上衣",
-        productId: "0123456789",
-        checked: true,
-        startNum: 0,
-        list: [{
-          isActive: true,
-          color: '黑色',
-          size: 'F',
-          ManufacturerNo: '1253',
-          cost: '200',
-          price: 500,
-          selfNo: '123456789',
-          brandNo: '123456789',
-          inStock: false
-        }, {
-          isActive: false,
-          color: '黑色',
-          size: 'F',
-          ManufacturerNo: '1253',
-          cost: '200',
-          price: 500,
-          selfNo: '123456789',
-          brandNo: '123456789',
-          inStock: true
-        }]
-      }
-    })
+    //
+
+
     const brandNumState = computed({
-      get: () => brandNum.value > -1 && brandNum.value<101 ? true : false,
+      get: () => brandNum.value > -1 && brandNum.value < 101 ? true : false,
     })
     const tagsValue = ref(['男生上衣', '個性', '襯衫']);
     const checked = ref(dataObj.dataItems.checked);
@@ -283,12 +293,26 @@ export default {
     const selected = ref([])
 
     const onRowSelected = (items) => {
-      console.log('item:',items)
+      console.log('item:', items)
       selected.value = items
 
     }
 
-    return {tagsValue, checked, tableObj, addRow, barcodeValue, brandTableObj, dataObj, brandNum, brandNumState, newItem,submit,onRowSelected,selected}
+    return {
+      tagsValue,
+      checked,
+      tableObj,
+      addRow,
+      barcodeValue,
+      brandTableObj,
+      dataObj,
+      brandNum,
+      brandNumState,
+      newItem,
+      submit,
+      onRowSelected,
+      selected
+    }
   },
 
 
