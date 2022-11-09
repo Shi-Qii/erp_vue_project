@@ -8,61 +8,97 @@
         <div class="card-body">
           <form>
             <div class="row">
-              <div class="col-md-6 pr-1">
+              <div class="col-md-4 ">
                 <div class="form-group">
-                  <label>商品編號</label>
-                  <input type="text" class="form-control" placeholder="商品編號">
+                  <b-col>
+                    <label>商品編號</label>
+                  </b-col>
+                  <b-col>
+                    <b-input v-model="productObj.productId" placeholder="商品編號"></b-input>
+                  </b-col>
                 </div>
               </div>
-              <div class="col-md-6 px-1">
-                <div class="form-group pl-3">
-                  <label>狀態</label>
-                  <div class="pl-3 pt-2">
-                    <b-form-checkbox v-model="checked" name="check-button" switch>
-                      商品狀態 <b> (狀態: {{ checked ? '上架' : '下架' }})</b>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <b-col>
+                    <label>商品狀態</label><label class="pl-4">
+                    <b-form-checkbox v-model="productObj.productIsActive" name="check-button" switch>
+                      <b> (狀態: {{ productObj.productIsActive ? '上架' : '下架' }})</b>
                     </b-form-checkbox>
-                  </div>
-
+                  </label>
+                  </b-col>
                 </div>
               </div>
             </div>
             <div class="row">
-              <div class="col-md-12">
+              <div class="col-md-7">
                 <div class="form-group">
-                  <label>商品名稱</label>
-                  <input type="text" class="form-control" placeholder="商品名稱">
+                  <b-col>
+                    <label>商品名稱</label>
+                  </b-col>
+                  <b-col>
+                    <b-input type="text" class="form-control" v-model="productObj.productName"
+                             placeholder="商品名稱"></b-input>
+                  </b-col>
                 </div>
               </div>
             </div>
             <div class="row">
-              <div class="col-12 pr-1">
+              <div class="col-md-3 ">
                 <div class="form-group">
-                  <label>Tag</label>
-                  <b-form-tags v-model="tagsValue">
-                    <template v-slot="{ tags, inputAttrs, inputHandlers,  addTag, removeTag }">
-                      <b-input-group class="mb-2">
-                        <b-form-input
-                            v-bind="inputAttrs"
-                            v-on="inputHandlers"
-                            placeholder="New tag - Press enter to add"
-                            class=" col-12"
-                        ></b-form-input>
-                        <b-input-group-append>
-                          <b-button @click="addTag()" variant="outline-secondary">Add</b-button>
-                        </b-input-group-append>
-                      </b-input-group>
-                      <div class=" " style="font-size: 1.5rem;">
-                        <b-form-tag
-                            v-for="(tag,index) in tags" :key="index+'_'"
-                            @remove="removeTag(tag)"
-                            :title="tag"
-                            variant="secondary"
-                            class="mr-1"
-                        >{{ tag }}
-                        </b-form-tag>
-                      </div>
-                    </template>
-                  </b-form-tags>
+                  <b-col>
+                    <label>廠商編號</label>
+                  </b-col>
+                  <b-col>
+                    <b-input v-model="productObj.productManufacturerNo" placeholder="廠商編號"></b-input>
+                  </b-col>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <b-col>
+                    <label>廠商名稱</label>
+                  </b-col>
+                  <b-col>
+                    <b-input type="text" class="form-control" v-model="productObj.productManufacturerName"
+                             placeholder="廠商名稱"></b-input>
+                  </b-col>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-7 pr-1">
+                <div class="form-group">
+                  <b-col>
+                    <label>Tag</label>
+                  </b-col>
+                  <b-col>
+                    <b-form-tags v-model="tagsValue">
+                      <template v-slot="{ tags, inputAttrs, inputHandlers,  addTag, removeTag }">
+                        <b-input-group class="mb-2">
+                          <b-form-input
+                              v-bind="inputAttrs"
+                              v-on="inputHandlers"
+                              placeholder="New tag - Press enter to add"
+                              class=" col-12"
+                          ></b-form-input>
+                          <b-input-group-append>
+                            <b-button @click="addTag()" variant="outline-secondary">Add</b-button>
+                          </b-input-group-append>
+                        </b-input-group>
+                        <div class=" " style="font-size: 1.5rem;">
+                          <b-form-tag
+                              v-for="(tag,index) in tags" :key="index+'_'"
+                              @remove="removeTag(tag)"
+                              :title="tag"
+                              variant="secondary"
+                              class="mr-1"
+                          >{{ tag }}
+                          </b-form-tag>
+                        </div>
+                      </template>
+                    </b-form-tags>
+                  </b-col>
                 </div>
               </div>
             </div>
@@ -81,6 +117,42 @@
                       </div>
                       <div id="editColor" class="mt-2">
                         <h5>顏色</h5>
+                        <div>
+                          <b-button v-b-toggle.collapse-3 class="m-1">黑白灰系</b-button>
+                          <b-collapse visible id="collapse-3">
+                            <b-card>I should start open!</b-card>
+                          </b-collapse>
+                        </div>
+                        <div>
+                          <b-button v-b-toggle.collapse-3 class="m-1">米杏淺系</b-button>
+                          <b-collapse visible id="collapse-3">
+                            <b-card>I should start open!</b-card>
+                          </b-collapse>
+                        </div>
+                        <div>
+                          <b-button v-b-toggle.collapse-3 class="m-1">橘黃咖系</b-button>
+                          <b-collapse visible id="collapse-3">
+                            <b-card>I should start open!</b-card>
+                          </b-collapse>
+                        </div>
+                        <div>
+                          <b-button v-b-toggle.collapse-3 class="m-1">紅粉色系</b-button>
+                          <b-collapse visible id="collapse-3">
+                            <b-card>I should start open!</b-card>
+                          </b-collapse>
+                        </div>
+                        <div>
+                          <b-button v-b-toggle.collapse-3 class="m-1">藍紫綠系</b-button>
+                          <b-collapse visible id="collapse-3">
+                            <b-card>I should start open!</b-card>
+                          </b-collapse>
+                        </div>
+                        <div>
+                          <b-button v-b-toggle.collapse-3 class="m-1">其他分類</b-button>
+                          <b-collapse visible id="collapse-3">
+                            <b-card>I should start open!</b-card>
+                          </b-collapse>
+                        </div>
                       </div>
                       <div id="editResult" class="mt-2">
                         <h5>結果</h5>
@@ -96,32 +168,27 @@
                 <div class="form-group">
                   <div>
                     <b-table
-                        :items="tableObj.items"
-                        :fields="tableObj.fields"
-                        :sort-by.sync="tableObj.sortBy"
-                        :sort-desc.sync="tableObj.sortDesc"
+                        :items="productObj.list"
+                        :fields="mainTableObj.fields"
                         sort-icon-left
                         responsive="sm"
                         selectable
                         @row-selected="onRowSelected"
-
                     >
                       <template #cell(isActive)="data">
-                        <b-form-checkbox v-model="data.item.isActive" switch>
+                        <b-form-checkbox v-model="data.item.itemIsActive" switch>
                           <b> ({{ data.item.isActive ? '上架' : '下架' }})</b>
                         </b-form-checkbox>
                       </template>
                       <template #cell(isDelete)="data">
-                        <b-form-checkbox v-model="data.item.isDelete" v-if="data.item.inStock===false">
+                        <b-form-checkbox v-model="data.item.itemIsDelete"
+                                         v-if="data.item.itemInStock===false">
                         </b-form-checkbox>
                       </template>
                       <template #cell(ManufacturerNo)="data">
-                        <input v-model="data.item.ManufacturerNo">
+                        <input v-model="data.item.itemManufacturerNo">
                       </template>
                     </b-table>
-                    <div>
-
-                    </div>
                   </div>
                 </div>
               </div>
@@ -133,22 +200,20 @@
                 <div>
                   <b-button v-b-modal.print-modal>列印條碼</b-button>
                   <b-button @click="submit()" variant="outline-info" class="ml-2">新增商品</b-button>
-
                   <b-modal size="lg" id="print-modal" hide-footer title="請填寫標籤數量">
-                    <h5>{{ dataObj.dataItems.productId }} - {{ dataObj.dataItems.productName }}</h5>
+                    <h5>{{ productObj.productId }} - {{ productObj.productName }}</h5>
                     <h5></h5>
                     <b-table
-                        :items="tableObj.items"
+                        :items="productObj.list"
                         :fields="brandTableObj.fields"
                         sort-icon-left
                         responsive="sm"
-
                     >
-                      <template #cell(printNum)>
+                      <template #cell(printNum)="data">
                         <b-form-input
                             placeholder="列印張數限制1～100"
                             trim
-                            v-model="brandNum"
+                            v-model="data.item.brandNum"
                             aria-describedby="input-live-help input-live-feedback"
                             :state="brandNumState"
                         ></b-form-input>
@@ -160,7 +225,6 @@
                     </b-table>
                     <b-button class="mt-2" variant="outline-warning" block>列印</b-button>
                   </b-modal>
-
                 </div>
               </div>
             </div>
@@ -171,7 +235,7 @@
           <barcode v-bind:value="barcodeValue" format="CODE39" width="1.5" height="35">
           </barcode>
           {{ selected }}
-          {{ dataObj.dataItems.list }}
+          productObj={{ productObj.list[0] }}
         </div>
       </div>
     </div>
@@ -180,105 +244,94 @@
 </template>
 
 <script>
-import {computed, reactive, ref, onMounted} from "@vue/composition-api/dist/vue-composition-api";
+import {computed, reactive, ref, onBeforeMount} from "@vue/composition-api/dist/vue-composition-api";
 import VueBarcode from 'vue-barcode';
 
 export default {
-  name: "MainFormPage",
+  name: "upsertProductPage",
   components: {
     'barcode': VueBarcode
   },
   setup() {
-    onMounted(() => {
-       dataObj.dataItems = {
-         productName: "上衣",
-         productId: "0123456789",
-         checked: true,
-         startNum: 0,
-         list: [{
-           isActive: true,
-           color: '黑色',
-           size: 'F',
-           ManufacturerNo: '1253',
-           cost: '200',
-           price: 500,
-           selfNo: '123456789',
-           brandNo: '123456789',
-           inStock: false
-         }, {
-           isActive: false,
-           color: '黑色',
-           size: 'F',
-           ManufacturerNo: '1253',
-           cost: '200',
-           price: 500,
-           selfNo: '123456789',
-           brandNo: '123456789',
-           inStock: true
-         }]
-       }
-
-    dataObj.dataItems.list.forEach(f=>{
-       f.isDelete = false;
+    onBeforeMount(() => {
+      let dataObj = {
+        productName: "上衣",
+        productId: "0123456789",
+        productManufacturerNo: "0123456789",
+        productManufacturerName: "衣蕾",
+        productIsActive: true,
+        list: [{
+          itemIsActive: true,
+          itemColor: '黑色',
+          itemSize: 'F',
+          itemManufacturerNo: '1253',
+          itemCost: '200',
+          itemPrice: 500,
+          itemNo: '123456789',
+          itemBrandNo: '123456789',
+          itemInStock: false
+        }, {
+          itemIsActive: true,
+          itemColor: '藍色',
+          itemSize: 'F',
+          itemManufacturerNo: '1253',
+          itemCost: '200',
+          itemPrice: 500,
+          itemNo: '123456789',
+          itemBrandNo: '123456789',
+          itemInStock: true
+        }]
+      }
+      dataObj.list.forEach(f => {
+        f.itemIsDelete = false;
       })
+      productObj.value = dataObj
+      // sizeList
+      // colorList
+      //tagsValue
     })
-    let dataObj= reactive({dataItems:{list:[]}}) ;
 
-    const newItem = function () {
-      this.$refs['newItem-modal'].show()
-    }
-    const brandNum = ref('0')
-    //
-
-
-    const brandNumState = computed({
-      get: () => brandNum.value > -1 && brandNum.value < 101 ? true : false,
-    })
     const tagsValue = ref(['男生上衣', '個性', '襯衫']);
-    const checked = ref(dataObj.dataItems.checked);
-    const barcodeValue = ref('CODE39 Barcode');
+    let productObj = ref([]);
+    const checked = ref(productObj.value.checked);
 
-    const tableObj = reactive({
-      'items': dataObj.dataItems.list,
+    const mainTableObj = reactive({
       'fields': [
-        {label: '顏色', key: 'color', sortable: true},
-        {label: '尺寸', key: 'size', sortable: true},
-        {label: '廠商編號', key: 'ManufacturerNo', sortable: true},
-        {label: '成本', key: 'cost', sortable: true},
-        {label: '售價', key: 'price', sortable: true},
-        {label: '內部編號', key: 'selfNo', sortable: false},
-        {label: '條碼編號', key: 'brandNo', sortable: false},
-        {label: '狀態', key: 'isActive', sortable: false},
-        {label: '刪除', key: 'isDelete', sortable: false}
+        {label: '顏色', key: 'itemColor', sortable: true},
+        {label: '尺寸', key: 'itemSize', sortable: true},
+        {label: '廠商編號', key: 'itemManufacturerNo', sortable: true},
+        {label: '成本', key: 'itemCost', sortable: true},
+        {label: '售價', key: 'itemPrice', sortable: true},
+        {label: '內部編號', key: 'itemNo', sortable: false},
+        {label: '條碼編號', key: 'itemBrandNo', sortable: false},
+        {label: '狀態', key: 'itemIsActive', sortable: false},
+        {label: '刪除', key: 'itemIsDelete', sortable: false}
       ],
-      'sortBy': 'age',
-      'sortDesc': false
-
     })
 
     const addRow = () => {
-      //後面補上畫面輸入匡對應回來物件，從這裡推近table
-      tableObj.items.push({
-            isActive: true,
-            color: '白色',
-            size: 'F',
-            ManufacturerNo: '1253',
-            cost: '200',
-            price: 500,
-            selfNo: '2',
-            brandNo: '0',
-            inStock: false
+      productObj.value.list.push({
+            itemIsActive: true,
+            itemColor: '白色',
+            itemSize: 'F',
+            itemManufacturerNo: '1253',
+            itemCost: '200',
+            itemPrice: 500,
+            itemNo: '2',
+            itemBrandNo: '0',
+            itemInStock: false,
           }
       )
     }
+
     const brandTableObj = reactive({
       'fields': [
-        {label: '顏色', key: 'color', sortable: true},
-        {label: '尺寸', key: 'size', sortable: true},
-        {label: '售價', key: 'price', sortable: true},
-        {label: '內部編號', key: 'selfNo', sortable: false},
-        {label: '條碼編號', key: 'brandNo', sortable: false},
-        {label: '狀態', key: 'isActive', sortable: false},
+        {label: '顏色', key: 'itemColor', sortable: true},
+        {label: '尺寸', key: 'itemSize', sortable: true},
+        {label: '售價', key: 'itemPrice', sortable: true},
+        {label: '內部編號', key: 'itemNo', sortable: false},
+        {label: '條碼編號', key: 'itemBrandNo', sortable: false},
+        {label: '狀態', key: 'itemIsActive', sortable: false},
         {label: '列印張數', key: 'printNum', sortable: false}
       ],
       'sortBy': 'age',
@@ -286,9 +339,18 @@ export default {
 
     })
 
+    const barcodeValue = ref('CODE39 Barcode');
+    const brandNum = ref('0')
+    const brandNumState = computed({
+      get: () => brandNum.value > -1 && brandNum.value < 101 ? true : false,
+    })
+
+    const newItem = function () {
+      this.$refs['newItem-modal'].show()
+    }
+
 
     const submit = () => {
-
     }
     const selected = ref([])
 
@@ -301,17 +363,16 @@ export default {
     return {
       tagsValue,
       checked,
-      tableObj,
       addRow,
       barcodeValue,
       brandTableObj,
-      dataObj,
       brandNum,
       brandNumState,
       newItem,
       submit,
       onRowSelected,
-      selected
+      selected,
+      productObj, mainTableObj
     }
   },
 
