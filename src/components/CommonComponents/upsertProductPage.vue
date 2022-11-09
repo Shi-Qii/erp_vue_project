@@ -8,24 +8,24 @@
         <div class="card-body">
           <form>
             <div class="row">
-              <div class="col-md-4 ">
+              <div class="col-md-3">
                 <div class="form-group">
                   <b-col>
                     <label>商品編號</label>
                   </b-col>
                   <b-col>
-                    <b-input v-model="productObj.productId" placeholder="商品編號"></b-input>
+                    <b-input v-model="productObj.productId" disabled="disabled"></b-input>
                   </b-col>
                 </div>
               </div>
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <div class="form-group">
                   <b-col>
-                    <label>商品狀態</label><label class="pl-4">
-                    <b-form-checkbox v-model="productObj.productIsActive" name="check-button" switch>
+                    <label>商品狀態</label>
+                    <b-form-checkbox class="pt-2" v-model="productObj.productIsActive" name="check-button" switch>
                       <b> (狀態: {{ productObj.productIsActive ? '上架' : '下架' }})</b>
                     </b-form-checkbox>
-                  </label>
+
                   </b-col>
                 </div>
               </div>
@@ -172,20 +172,39 @@
                         :fields="mainTableObj.fields"
                         sort-icon-left
                         responsive="sm"
-                        selectable
-                        @row-selected="onRowSelected"
                     >
-                      <template #cell(isActive)="data">
-                        <b-form-checkbox v-model="data.item.itemIsActive" switch>
-                          <b> ({{ data.item.isActive ? '上架' : '下架' }})</b>
+                      <template #cell(itemIsActive)="data">
+                        <b-form-checkbox v-model="data.item.itemIsActive" v-if="productObj.productIsActive===true"
+                                         switch>
+                          <b> ({{ data.item.itemIsActive ? '上架' : '下架' }})</b>
+                        </b-form-checkbox>
+                        <b-form-checkbox v-else switch disabled="disabled">
+                          <b> (N/A)</b>
                         </b-form-checkbox>
                       </template>
-                      <template #cell(isDelete)="data">
-                        <b-form-checkbox v-model="data.item.itemIsDelete"
-                                         v-if="data.item.itemInStock===false">
-                        </b-form-checkbox>
+                      <!--                      <template #cell(itemIsDelete)="data">-->
+                      <!--                        <b-form-checkbox v-model="data.item.itemIsDelete"-->
+                      <!--                                         v-if="data.item.itemInStock===false">-->
+                      <!--                        </b-form-checkbox>-->
+                      <!--                        <b-form-checkbox v-else-->
+                      <!--                                         disabled="disabled">-->
+                      <!--                        </b-form-checkbox>-->
+                      <!--                      </template>-->
+                      <template #cell(itemIsDelete)="data">
+                        <b-button :pressed.sync="data.item.itemIsDelete" variant="primary"
+                                  v-model="data.item.itemIsDelete"
+                                  v-if="data.item.itemInStock===false"
+                                  @click="deleteItemButton"
+                        >刪除
+                        </b-button>
+                        <b-button :pressed.sync="data.item.itemIsDelete" variant="primary"
+                                  v-else
+                                  disabled="disabled"
+                        >刪除
+                        </b-button>
+                        {{ data.item.itemIsDelete }}
                       </template>
-                      <template #cell(ManufacturerNo)="data">
+                      <template #cell(itemManufacturerNo)="data">
                         <input v-model="data.item.itemManufacturerNo">
                       </template>
                     </b-table>
@@ -209,18 +228,15 @@
                         sort-icon-left
                         responsive="sm"
                     >
+                      <template #cell(itemIsActive)="data">
+                        <b> {{ data.item.itemIsActive ? '上架' : '下架' }}</b>
+                      </template>
                       <template #cell(printNum)="data">
-                        <b-form-input
-                            placeholder="列印張數限制1～100"
+                        <b-input
                             trim
                             v-model="data.item.brandNum"
-                            aria-describedby="input-live-help input-live-feedback"
-                            :state="brandNumState"
-                        ></b-form-input>
-                        <b-form-invalid-feedback id="input-live-feedback">
-                          輸入值有誤
-                        </b-form-invalid-feedback>
-                        <b-form-text id="input-live-help"></b-form-text>
+                            :state="data.item.brandNum>=0 && data.item.brandNum<=50 && data.item.brandNum!=='' "
+                        ></b-input>
                       </template>
                     </b-table>
                     <b-button class="mt-2" variant="outline-warning" block>列印</b-button>
@@ -235,7 +251,7 @@
           <barcode v-bind:value="barcodeValue" format="CODE39" width="1.5" height="35">
           </barcode>
           {{ selected }}
-          productObj={{ productObj.list[0] }}
+          productObj={{ productObj.list }}
         </div>
       </div>
     </div>
@@ -244,7 +260,7 @@
 </template>
 
 <script>
-import {computed, reactive, ref, onBeforeMount} from "@vue/composition-api/dist/vue-composition-api";
+import {reactive, ref, onBeforeMount} from "@vue/composition-api/dist/vue-composition-api";
 import VueBarcode from 'vue-barcode';
 
 export default {
@@ -255,6 +271,7 @@ export default {
   setup() {
     onBeforeMount(() => {
       let dataObj = {
+        upsertType: "U",
         productName: "上衣",
         productId: "0123456789",
         productManufacturerNo: "0123456789",
@@ -284,6 +301,7 @@ export default {
       }
       dataObj.list.forEach(f => {
         f.itemIsDelete = false;
+        f.brandNum = 0;
       })
       productObj.value = dataObj
       // sizeList
@@ -317,9 +335,10 @@ export default {
             itemManufacturerNo: '1253',
             itemCost: '200',
             itemPrice: 500,
-            itemNo: '2',
-            itemBrandNo: '0',
+            itemNo: '',
+            itemBrandNo: '',
             itemInStock: false,
+            itemIsDelete: false,
           }
       )
     }
@@ -331,19 +350,18 @@ export default {
         {label: '售價', key: 'itemPrice', sortable: true},
         {label: '內部編號', key: 'itemNo', sortable: false},
         {label: '條碼編號', key: 'itemBrandNo', sortable: false},
-        {label: '狀態', key: 'itemIsActive', sortable: false},
-        {label: '列印張數', key: 'printNum', sortable: false}
+        {label: '列印張數 (max:50)', key: 'printNum', sortable: false}
       ],
       'sortBy': 'age',
       'sortDesc': false
 
     })
 
+    const deleteItemButton=function (){
+      alert("aaaa");
+    }
+
     const barcodeValue = ref('CODE39 Barcode');
-    const brandNum = ref('0')
-    const brandNumState = computed({
-      get: () => brandNum.value > -1 && brandNum.value < 101 ? true : false,
-    })
 
     const newItem = function () {
       this.$refs['newItem-modal'].show()
@@ -366,13 +384,11 @@ export default {
       addRow,
       barcodeValue,
       brandTableObj,
-      brandNum,
-      brandNumState,
       newItem,
       submit,
       onRowSelected,
       selected,
-      productObj, mainTableObj
+      productObj, mainTableObj,deleteItemButton
     }
   },
 
