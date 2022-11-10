@@ -209,7 +209,7 @@
                         <b-table
                             :items="productObj.list"
                             :fields="mainTableObj.fields"
-                            :tbody-tr-class="rowClass"
+
                             sort-icon-left
                             responsive="sm"
                         >
@@ -223,7 +223,10 @@
                             </b-form-checkbox>
                           </template>
                           <template #cell(itemIsDelete)="data">
-                            <b-form-checkbox v-model="data.item.itemIsDelete"
+                            <b-form-checkbox
+
+                                @change="changeTest(data)"
+                                v-model="data.item.itemIsDelete"
                                              v-if="data.item.itemInStock===false">
                             </b-form-checkbox>
                             <b-form-checkbox v-else
@@ -232,7 +235,9 @@
                           </template>
                           <template #cell(itemManufacturerNo)="data">
                             <input v-model="data.item.itemManufacturerNo">
+                            {{data}}
                           </template>
+
                         </b-table>
                       </div>
                     </div>
@@ -330,7 +335,8 @@ export default {
           itemPrice: 500,
           itemNo: '123456789',
           itemBrandNo: '123456789',
-          itemInStock: false
+          itemInStock: false,
+          _rowVariant: 'none'
         }, {
           itemIsActive: true,
           itemColor: '藍色',
@@ -430,8 +436,15 @@ export default {
     }
 
 
-
+  const changeTest = (data) => {
+    if(data.item.itemIsDelete){
+      productObj.value.list[data.index]._rowVariant ='dark';
+    }else {
+      productObj.value.list[data.index]._rowVariant ='none';
+    }
+  }
     return {
+      changeTest,
       tagsValue,
       checked,
       addRow,
