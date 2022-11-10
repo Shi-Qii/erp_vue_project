@@ -89,8 +89,28 @@
 
                       <b-list-group>
                         <b-list-group-item class=" justify-content-between align-items-center">
-                          <b-icon icon="info-circle-fill" scale="2" variant="info"></b-icon>
+<!--                          <b-icon icon="info-circle-fill" scale="2" variant="info"></b-icon>-->
+                         <div>
+                           <b-list-group>
+                             <b-list-group-item class="d-flex justify-content-between align-items-center">
+                               <b-icon icon="x-circle" scale="2" variant="danger"></b-icon>
+                               Cras justo odio
+                             </b-list-group-item>
+                             <b-list-group-item class="d-flex justify-content-between align-items-center">
+                               <b-icon icon="exclamation-triangle-fill" scale="2" variant="warning"></b-icon>
+                               Dapibus ac facilisis in
+                             </b-list-group-item>
+                             <b-list-group-item class="d-flex justify-content-between align-items-center">
+                               <b-icon icon="info-circle-fill" scale="2" variant="info"></b-icon>
+                               Morbi leo risus
+                             </b-list-group-item>
+                             <b-list-group-item class="d-flex justify-content-between align-items-center">
+                               <b-icon icon="check-square" scale="2" variant="success"></b-icon>
+                               Incididunt veniam velit
+                             </b-list-group-item>
+                           </b-list-group>
 
+                         </div>
                           促銷中：{{ productObj.promoInfo.promoName }} <a
                             href="https://bootstrap-vue.org/docs/icons/#icons-1"
                             style="color:black">我的icon勒？？？？</a><br>
@@ -255,6 +275,8 @@
                           </template>
                         </b-table>
                         <b-button class="mt-2" variant="outline-info" block>列印</b-button>
+
+
                       </b-modal>
                     </div>
                   </div>
@@ -283,7 +305,7 @@ import VueBarcode from 'vue-barcode';
 export default {
   name: "upsertProductPage",
   components: {
-    'barcode': VueBarcode
+    'barcode': VueBarcode,
   },
   setup() {
     onBeforeMount(() => {

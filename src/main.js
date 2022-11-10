@@ -5,9 +5,12 @@ import App from './App.vue';
 // bootstrap-vue
 // https://bootstrap-vue.org/docs/components
 import 'bootstrap/dist/css/bootstrap.css';
-import BootstrapVue from 'bootstrap-vue';
 // bootstrap
+import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.use(BootstrapVue)
+Vue.use(BootstrapVueIcons)
 //icon
 import {faHome, faSignInAlt, faSignOutAlt, faUser, faUserPlus} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
