@@ -108,6 +108,21 @@
                     <b-col>
                       <label>商品照片</label>
                       <text style="color:lightskyblue"></text>
+                      <div class="col-md-5 offset-md-1">
+
+                          <div class="form-group">
+                            <b-form-file accept="image/jpeg, image/png, image/gif" @change="uploadFile()" >
+                            </b-form-file>
+                            <div class="border p-2 mt-3">
+                              <template v-if="preview">
+                                <img :src="preview" class="img-fluid" />
+                                <p class="mb-0">file name: {{ image.name }}</p>
+                                <p class="mb-0">size: {{ image.size/1024 }}KB</p>
+                              </template>
+                            </div>
+                          </div>
+
+                      </div>
                     </b-col>
                   </div>
                 </div>
@@ -186,6 +201,8 @@
                     <div class="form-group">
                       <div>
                         <b-table
+                            class="text-nowrap"
+                            :sticky-header="stickyHeader"
                             :items="productObj.list"
                             :fields="mainTableObj.fields"
                             :tbody-tr-class="rowClass"
@@ -210,11 +227,10 @@
                             </b-form-checkbox>
                           </template>
                           <template #cell(itemManufacturerNo)="data">
-                            <input v-model="data.item.itemManufacturerNo">
+                            <input class="col-12" v-model="data.item.itemManufacturerNo">
                           </template>
                           <template #cell(itemCost)="data">
-                            <input v-model="data.item.itemCost" v-if="data.item.itemNo==='' "  >
-                            <input v-model="data.item.itemCost" v-else  disabled="disabled" >
+                            <input class="col-12" v-model="data.item.itemCost" :disabled="data.item.itemNo===''?false:true "  >
                           </template>
                         </b-table>
                       </div>
@@ -241,6 +257,8 @@
                         <h5>{{ productObj.productId }} - {{ productObj.productName }}</h5>
                         <h5></h5>
                         <b-table
+                            class="text-nowrap"
+                            :sticky-header="stickyHeader"
                             :items="productObj.list"
                             :fields="brandTableObj.fields"
                             sort-icon-left
@@ -340,12 +358,13 @@ export default {
     const tagsValue = ref(['男生上衣', '個性', '襯衫']);
     let productObj = ref([]);
     let isPromo = ref([]);
+    let stickyHeader = ref(true);
     const checked = ref(productObj.value.checked);
 
     const mainTableObj = reactive({
       'fields': [
         {label: '顏色', key: 'itemColor', sortable: true},
-        {label: '尺寸', key: 'itemSize', sortable: true},
+        {label: '尺寸', key: 'itemSize', sortable: true,class:'text-center '},
         {label: '廠商編號', key: 'itemManufacturerNo', sortable: true},
         {label: '成本', key: 'itemCost', sortable: true},
         {label: '售價', key: 'itemPrice', sortable: true},
@@ -411,9 +430,26 @@ export default {
         alert("error - 上傳失敗！")
       }
     }
+    const preview =ref(null)
+    const image =ref(null)
 
+    const uploadFile =function (event)  {
+      var input = event.target;
+      if (input.files) {
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          preview.value = e.target.result;
+        }
+        image.value=input.files[0];
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
 
     return {
+      image,
+      preview,
+      uploadFile,
+      stickyHeader,
       tagsValue,
       checked,
       addRow,
