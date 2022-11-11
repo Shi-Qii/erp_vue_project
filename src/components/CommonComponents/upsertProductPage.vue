@@ -111,9 +111,13 @@
                       <div class="col-md-5 offset-md-1">
 
                           <div class="form-group">
-                            <b-form-file accept="image/jpeg, image/png, image/gif" @change="uploadFile()" >
+                            <b-form-file accept="image/jpeg, image/png, image/gif" @change="uploadFile" >
+                            <b-button @click="uploadFile"  >
+                              <b-icon icon="search"></b-icon>
+                            </b-button>
                             </b-form-file>
                             <div class="border p-2 mt-3">
+
                               <template v-if="preview">
                                 <img :src="preview" class="img-fluid" />
                                 <p class="mb-0">file name: {{ image.name }}</p>
@@ -201,7 +205,7 @@
                     <div class="form-group">
                       <div>
                         <b-table
-                            class="text-nowrap"
+                            class="text-center text-nowrap"
                             :sticky-header="stickyHeader"
                             :items="productObj.list"
                             :fields="mainTableObj.fields"
@@ -364,7 +368,7 @@ export default {
     const mainTableObj = reactive({
       'fields': [
         {label: '顏色', key: 'itemColor', sortable: true},
-        {label: '尺寸', key: 'itemSize', sortable: true,class:'text-center '},
+        {label: '尺寸', key: 'itemSize', sortable: true,},
         {label: '廠商編號', key: 'itemManufacturerNo', sortable: true},
         {label: '成本', key: 'itemCost', sortable: true},
         {label: '售價', key: 'itemPrice', sortable: true},
