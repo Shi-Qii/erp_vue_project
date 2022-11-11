@@ -86,37 +86,16 @@
                 <div class="row" v-if="isPromo">
                   <div class="col-12">
                     <div class="form-group">
-
-                      <b-list-group>
-                        <b-list-group-item class=" justify-content-between align-items-center">
-<!--                          <b-icon icon="info-circle-fill" scale="2" variant="info"></b-icon>-->
-                         <div>
-                           <b-list-group>
-                             <b-list-group-item class="d-flex justify-content-between align-items-center">
-                               <b-icon icon="x-circle" scale="2" variant="danger"></b-icon>
-                               Cras justo odio
-                             </b-list-group-item>
-                             <b-list-group-item class="d-flex justify-content-between align-items-center">
-                               <b-icon icon="exclamation-triangle-fill" scale="2" variant="warning"></b-icon>
-                               Dapibus ac facilisis in
-                             </b-list-group-item>
-                             <b-list-group-item class="d-flex justify-content-between align-items-center">
-                               <b-icon icon="info-circle-fill" scale="2" variant="info"></b-icon>
-                               Morbi leo risus
-                             </b-list-group-item>
-                             <b-list-group-item class="d-flex justify-content-between align-items-center">
-                               <b-icon icon="check-square" scale="2" variant="success"></b-icon>
-                               Incididunt veniam velit
-                             </b-list-group-item>
-                           </b-list-group>
-
-                         </div>
-                          促銷中：{{ productObj.promoInfo.promoName }} <a
-                            href="https://bootstrap-vue.org/docs/icons/#icons-1"
-                            style="color:black">我的icon勒？？？？</a><br>
-                          折扣數：{{ productObj.promoInfo.promoDiscount }}
-                        </b-list-group-item>
-                      </b-list-group>
+                      <b-list-group-item class="d-flex justify-content-between align-items-center">
+                        <div :style="{'width':'100%' }">
+                          <b-row>
+                            <b-col cols="1"><b-icon icon="info-circle-fill" scale="2" variant="info"></b-icon></b-col>
+                            <b-col cols="3">促銷中</b-col>
+                            <b-col cols="3">商品{{ productObj.promoInfo.promoDiscount }}折</b-col>
+                            <b-col cols="5">{{ productObj.promoInfo.promoName }}</b-col>
+                          </b-row>
+                        </div>
+                      </b-list-group-item>
                     </div>
                   </div>
                 </div>
@@ -209,8 +188,8 @@
                         <b-table
                             :items="productObj.list"
                             :fields="mainTableObj.fields"
-
-                            sort-icon-left
+                            :tbody-tr-class="rowClass"
+                            sort-icon-rigth
                             responsive="sm"
                         >
                           <template #cell(itemIsActive)="data">
@@ -223,10 +202,7 @@
                             </b-form-checkbox>
                           </template>
                           <template #cell(itemIsDelete)="data">
-                            <b-form-checkbox
-
-                                @change="changeTest(data)"
-                                v-model="data.item.itemIsDelete"
+                            <b-form-checkbox v-model="data.item.itemIsDelete"
                                              v-if="data.item.itemInStock===false">
                             </b-form-checkbox>
                             <b-form-checkbox v-else
@@ -235,9 +211,11 @@
                           </template>
                           <template #cell(itemManufacturerNo)="data">
                             <input v-model="data.item.itemManufacturerNo">
-                            {{data}}
                           </template>
-
+                          <template #cell(itemCost)="data">
+                            <input v-model="data.item.itemCost" v-if="data.item.itemNo==='' "  >
+                            <input v-model="data.item.itemCost" v-else  disabled="disabled" >
+                          </template>
                         </b-table>
                       </div>
                     </div>
@@ -250,7 +228,7 @@
                 <div style="text-align:center" class="mt-3">
                   <div>
                     <div>
-                      <b-button @click="submit()" variant="info" class="ml-3" >  儲存資訊  </b-button>
+                      <b-button @click="submit()" variant="info" class="ml-3"> 儲存資訊</b-button>
                       <b-modal id="submit-modal" ref="submit-modal" hide-footer title="資料儲存成功！">
                         <h5>{{ productObj.productId }} - {{ productObj.productName }}</h5>
                         <div class="float-right">
@@ -322,9 +300,9 @@ export default {
         productManufacturerName: "衣蕾",
         productIsActive: true,
         promoInfo: {
-          promoId: 'jhjhj',
-          promoName: '全部九折',
-          promoDiscount: '0.9',
+          promoId: '123456',
+          promoName: '換季大拍賣',
+          promoDiscount: '95',
         },
         list: [{
           itemIsActive: true,
@@ -335,8 +313,7 @@ export default {
           itemPrice: 500,
           itemNo: '123456789',
           itemBrandNo: '123456789',
-          itemInStock: false,
-          _rowVariant: 'none'
+          itemInStock: false
         }, {
           itemIsActive: true,
           itemColor: '藍色',
@@ -436,15 +413,7 @@ export default {
     }
 
 
-  const changeTest = (data) => {
-    if(data.item.itemIsDelete){
-      productObj.value.list[data.index]._rowVariant ='dark';
-    }else {
-      productObj.value.list[data.index]._rowVariant ='none';
-    }
-  }
     return {
-      changeTest,
       tagsValue,
       checked,
       addRow,
