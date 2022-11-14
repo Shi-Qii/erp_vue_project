@@ -33,6 +33,9 @@ import VueCroppie from 'vue-croppie';
 import 'croppie/croppie.css' // import the croppie css manually
 
 Vue.use(VueCroppie);
+
+import api from '@/services/common.req';
+Vue.prototype.$UseAxios = api
 //------------------------專案配置end------------
 Vue.config.productionTip = false;
 new Vue({
