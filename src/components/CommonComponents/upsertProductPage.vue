@@ -304,16 +304,20 @@
 </template>
 
 <script>
-import {reactive, ref, onBeforeMount} from "@vue/composition-api/dist/vue-composition-api";
+import {reactive, ref, onBeforeMount,onMounted} from "@vue/composition-api/dist/vue-composition-api";
 import VueBarcode from 'vue-barcode';
-
+import GetData from '@/services/common.req';
 export default {
   name: "upsertProductPage",
   components: {
     'barcode': VueBarcode,
   },
   setup() {
+    onMounted(()=>{
+      GetData.Post('',{})
+    })
     onBeforeMount(() => {
+
       let dataObj = {
         upsertType: "U",
         productName: "上衣",
@@ -411,8 +415,7 @@ export default {
     })
 
     const rowClass = function (item, type) {
-      console.log(item);
-      console.log(type);
+
       if (!item || type !== 'row') return
       if (item.itemIsDelete === true) return 'table-secondary'
     }
