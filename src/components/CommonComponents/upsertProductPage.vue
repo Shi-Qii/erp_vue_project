@@ -306,7 +306,7 @@
 <script>
 import {reactive, ref, onBeforeMount,onMounted} from "@vue/composition-api/dist/vue-composition-api";
 import VueBarcode from 'vue-barcode';
-import GetData from '@/services/common.req';
+import $GetData from '@/services/common.req';
 export default {
   name: "upsertProductPage",
   components: {
@@ -314,7 +314,8 @@ export default {
   },
   setup() {
     onMounted(()=>{
-      GetData.Post('',{})
+      //統一命名$GetData
+      $GetData.Post('',{})
     })
     onBeforeMount(() => {
 

@@ -43,12 +43,12 @@ export const router = new Router({
         {
             path: domainName + 'ErrorPage',
             name: 'ErrorPage',
-            component: () => import('./ErrorPage/ErrorPage.vue')
+            component: () => import('@/ErrorPage/ErrorPage.vue')
         },
         {
             path: domainName + 'UpsertProductPage',
             name: 'UpsertProductPage',
-            component: () => import('./components/CommonComponents/upsertProductPage')
+            component: () => import('@/components/CommonComponents/upsertProductPage')
         }
     ]
 });
