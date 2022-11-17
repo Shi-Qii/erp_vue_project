@@ -294,7 +294,12 @@
             <barcode v-bind:value="barcodeValue" format="CODE39" width="1.5" height="35">
             </barcode>
           </div>
-
+          <draggable v-model="myArray" draggable=".item">
+            <div v-for="(element,idn) in myArray" :key="element+'_'+idn" class="item list-group-item">
+              {{element.name}}
+            </div>
+            <button slot="header" @click="addPeople">Add</button>
+          </draggable>
           <div class="mt-3">
             <p class="text-justify">
               1. 表頭固定(2張table) <br>
@@ -315,15 +320,17 @@
 <script>
 import {reactive, ref, onBeforeMount,onMounted} from "@vue/composition-api/dist/vue-composition-api";
 import VueBarcode from 'vue-barcode';
+import draggable from 'vuedraggable';
 export default {
   name: "upsertProductPage",
   components: {
     'barcode': VueBarcode,
+    draggable
   },
   setup() {
     onMounted(()=>{
-      //統一命名$GetData
-      this.$UseAxios.Post('',{})
+      //統一命名$UseAxios
+      // this.$UseAxios.Post('',{})
 
     })
     onBeforeMount(() => {
@@ -378,7 +385,10 @@ export default {
     let isPromo = ref([]);
     let stickyHeader = ref(true);
     const checked = ref(productObj.value.checked);
-
+    const myArray = ref([{name:'ㄧ'},{name:'二'}]);
+    const addPeople = () => {
+      myArray.value.push({name: '三'})
+    }
     const mainTableObj = reactive({
       'fields': [
         {label: '照片', key: 'pic', sortable: true},
@@ -475,7 +485,8 @@ export default {
       brandTableObj,
       newItem,
       submit,
-      productObj, mainTableObj, rowClass, isPromo
+      productObj, mainTableObj, rowClass, isPromo,
+      myArray,addPeople
     }
   },
 
