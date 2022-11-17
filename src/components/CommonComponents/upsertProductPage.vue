@@ -212,8 +212,8 @@
                             :fields="mainTableObj.fields"
                             :tbody-tr-class="rowClass"
                             sort-icon-rigth
-                            sticky-header
-                            responsive="sm"
+                            sticky-header="1000px"
+                            responsive
                         >
                           <template #cell(itemIsActive)="data">
                             <toggle-button :value="data.item.itemIsActive" color="#12A3B8" :sync="true" :labels="true" v-model="data.item.itemIsActive" :disabled="productObj.productIsActive===true?false:true " />
