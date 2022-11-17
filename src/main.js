@@ -34,6 +34,10 @@ import 'croppie/croppie.css' // import the croppie css manually
 
 Vue.use(VueCroppie);
 
+//toggleButton
+import ToggleButton from 'vue-js-toggle-button'
+Vue.use(ToggleButton)
+
 import api from '@/services/common.req';
 Vue.prototype.$UseAxios = api
 //------------------------專案配置end------------

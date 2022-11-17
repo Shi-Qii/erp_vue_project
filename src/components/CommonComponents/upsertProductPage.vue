@@ -19,11 +19,12 @@
                     </div>
                   </div>
                   <div class="col-md-5">
-                    <div class="form-group">
-                      <label>商品狀態</label>
-                      <b-form-checkbox class="pt-2" v-model="productObj.productIsActive" name="check-button" switch>
-                        <b> (狀態: {{ productObj.productIsActive ? '上架' : '下架' }})</b>
-                      </b-form-checkbox>
+                    <div class="form-group pl-5" >
+                      <div>商品狀態</div>
+<!--                      <b-form-checkbox class="pt-2" v-model="productObj.productIsActive" name="check-button" switch>-->
+<!--                        <b> (狀態: {{ productObj.productIsActive ? '上架' : '下架' }})</b>-->
+<!--                      </b-form-checkbox>-->
+                      <div  class="pt-3"> <toggle-button :value="productObj.productIsActive" color="#12A3B8" :sync="true" :labels="true" v-model="productObj.productIsActive" /></div>
                     </div>
                   </div>
                 </div>
@@ -51,41 +52,41 @@
                     </div>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-12">
-                    <div class="form-group">
-                      <label>Tag</label>
-                      <b-form-tags v-model="tagsValue">
-                        <template v-slot="{ tags, inputAttrs, inputHandlers,  addTag, removeTag }">
-                          <b-input-group class="mb-2">
-                            <b-form-input
-                                v-bind="inputAttrs"
-                                v-on="inputHandlers"
-                                placeholder="New tag - Press enter to add"
-                                class=" col-12"
-                            ></b-form-input>
-                            <b-input-group-append>
-                              <b-button @click="addTag()" variant="outline-secondary">Add</b-button>
-                            </b-input-group-append>
-                          </b-input-group>
-                          <div class=" " style="font-size: 1.5rem;">
-                            <b-form-tag
-                                v-for="(tag,index) in tags" :key="index+'_'"
-                                @remove="removeTag(tag)"
-                                :title="tag"
-                                variant="secondary"
-                                class="mr-1"
-                            >{{ tag }}
-                            </b-form-tag>
-                          </div>
-                        </template>
-                      </b-form-tags>
-                    </div>
-                  </div>
-                </div>
+<!--                <div class="row">-->
+<!--                  <div class="col-12">-->
+<!--                    <div class="form-group">-->
+<!--                      <label>Tag</label>-->
+<!--                      <b-form-tags v-model="tagsValue">-->
+<!--                        <template v-slot="{ tags, inputAttrs, inputHandlers,  addTag, removeTag }">-->
+<!--                          <b-input-group class="mb-2">-->
+<!--                            <b-form-input-->
+<!--                                v-bind="inputAttrs"-->
+<!--                                v-on="inputHandlers"-->
+<!--                                placeholder="New tag - Press enter to add"-->
+<!--                                class=" col-12"-->
+<!--                            ></b-form-input>-->
+<!--                            <b-input-group-append>-->
+<!--                              <b-button @click="addTag()" variant="outline-secondary">Add</b-button>-->
+<!--                            </b-input-group-append>-->
+<!--                          </b-input-group>-->
+<!--                          <div class=" " style="font-size: 1.5rem;">-->
+<!--                            <b-form-tag-->
+<!--                                v-for="(tag,index) in tags" :key="index+'_'"-->
+<!--                                @remove="removeTag(tag)"-->
+<!--                                :title="tag"-->
+<!--                                variant="secondary"-->
+<!--                                class="mr-1"-->
+<!--                            >{{ tag }}-->
+<!--                            </b-form-tag>-->
+<!--                          </div>-->
+<!--                        </template>-->
+<!--                      </b-form-tags>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </div>-->
                 <div class="row" v-if="isPromo">
                   <div class="col-12">
-                    <div class="form-group">
+                    <div class="form-group"><label>促銷說明</label>
                       <b-list-group-item class="d-flex justify-content-between align-items-center">
                         <div :style="{'width':'100%' }">
                           <b-row>
@@ -139,11 +140,12 @@
                 <div class="row mt-3">
                   <div class="col-12 pr-1">
                     <div class="form-group">
+                      <label>項目列表</label>
                       <div>
                         <b-button variant="outline-secondary" @click="addRow()">單筆新增</b-button>
                         <b-button variant="outline-secondary" class="ml-2" @click="newItem()">新增規格</b-button>
 
-                        <b-modal ref="newItem-modal" hide-footer title="新增規格">
+                        <b-modal ref="newItem-modal"  size="xl" hide-footer scrollable title="新增規格">
                           <div id="editSize" class="mt-2">
                             <h5>尺寸</h5>
                           </div>
@@ -206,21 +208,15 @@
                       <div>
                         <b-table
                             class="text-center text-nowrap"
-                            :sticky-header="stickyHeader"
                             :items="productObj.list"
                             :fields="mainTableObj.fields"
                             :tbody-tr-class="rowClass"
                             sort-icon-rigth
+                            sticky-header
                             responsive="sm"
                         >
                           <template #cell(itemIsActive)="data">
-                            <b-form-checkbox v-model="data.item.itemIsActive" v-if="productObj.productIsActive===true"
-                                             switch>
-                              <b> ({{ data.item.itemIsActive ? '上架' : '下架' }})</b>
-                            </b-form-checkbox>
-                            <b-form-checkbox v-else switch disabled="disabled">
-                              <b> (N/A)</b>
-                            </b-form-checkbox>
+                            <toggle-button :value="data.item.itemIsActive" color="#12A3B8" :sync="true" :labels="true" v-model="data.item.itemIsActive" :disabled="productObj.productIsActive===true?false:true " />
                           </template>
                           <template #cell(itemIsDelete)="data">
                             <b-form-checkbox v-model="data.item.itemIsDelete"
@@ -231,10 +227,13 @@
                             </b-form-checkbox>
                           </template>
                           <template #cell(itemManufacturerNo)="data">
-                            <input class="col-12" v-model="data.item.itemManufacturerNo">
+                            <input class="col-10" v-model="data.item.itemManufacturerNo">
                           </template>
                           <template #cell(itemCost)="data">
-                            <input class="col-12" v-model="data.item.itemCost" :disabled="data.item.itemNo===''?false:true "  >
+                            <input class="col-10" v-model="data.item.itemCost" :disabled="data.item.itemNo===''?false:true "  >
+                          </template>
+                          <template #cell(itemPrice)="data">
+                            <input class="col-10" v-model="data.item.itemPrice" :disabled="data.item.itemNo===''?false:true "  >
                           </template>
                         </b-table>
                       </div>
@@ -257,12 +256,12 @@
                           </b-button>
                         </div>
                       </b-modal>
-                      <b-modal size="lg" id="print-modal" hide-footer title="請填寫標籤數量">
+                      <b-modal size="lg" id="print-modal" hide-footer scrollable title="請填寫標籤數量">
                         <h5>{{ productObj.productId }} - {{ productObj.productName }}</h5>
                         <h5></h5>
                         <b-table
                             class="text-nowrap"
-                            :sticky-header="stickyHeader"
+                            sticky-header
                             :items="productObj.list"
                             :fields="brandTableObj.fields"
                             sort-icon-left
@@ -294,6 +293,16 @@
             <input v-model="barcodeValue"/><br>
             <barcode v-bind:value="barcodeValue" format="CODE39" width="1.5" height="35">
             </barcode>
+          </div>
+
+          <div class="mt-3">
+            <p class="text-justify">
+              1. 表頭固定(2張table) <br>
+              2.button-將成本售價試算數字存於前端，並且帶入試算 <br>
+              3.照片 <br>
+              4.條碼列印 <br>
+              5.新增規格 <br>
+            </p>
           </div>
 
         </div>
@@ -372,6 +381,7 @@ export default {
 
     const mainTableObj = reactive({
       'fields': [
+        {label: '照片', key: 'pic', sortable: true},
         {label: '顏色', key: 'itemColor', sortable: true},
         {label: '尺寸', key: 'itemSize', sortable: true,},
         {label: '廠商編號', key: 'itemManufacturerNo', sortable: true},
