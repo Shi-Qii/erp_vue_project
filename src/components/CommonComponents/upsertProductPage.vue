@@ -52,38 +52,6 @@
                     </div>
                   </div>
                 </div>
-<!--                <div class="row">-->
-<!--                  <div class="col-12">-->
-<!--                    <div class="form-group">-->
-<!--                      <label>Tag</label>-->
-<!--                      <b-form-tags v-model="tagsValue">-->
-<!--                        <template v-slot="{ tags, inputAttrs, inputHandlers,  addTag, removeTag }">-->
-<!--                          <b-input-group class="mb-2">-->
-<!--                            <b-form-input-->
-<!--                                v-bind="inputAttrs"-->
-<!--                                v-on="inputHandlers"-->
-<!--                                placeholder="New tag - Press enter to add"-->
-<!--                                class=" col-12"-->
-<!--                            ></b-form-input>-->
-<!--                            <b-input-group-append>-->
-<!--                              <b-button @click="addTag()" variant="outline-secondary">Add</b-button>-->
-<!--                            </b-input-group-append>-->
-<!--                          </b-input-group>-->
-<!--                          <div class=" " style="font-size: 1.5rem;">-->
-<!--                            <b-form-tag-->
-<!--                                v-for="(tag,index) in tags" :key="index+'_'"-->
-<!--                                @remove="removeTag(tag)"-->
-<!--                                :title="tag"-->
-<!--                                variant="secondary"-->
-<!--                                class="mr-1"-->
-<!--                            >{{ tag }}-->
-<!--                            </b-form-tag>-->
-<!--                          </div>-->
-<!--                        </template>-->
-<!--                      </b-form-tags>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
                 <div class="row" v-if="isPromo">
                   <div class="col-12">
                     <div class="form-group"><label>促銷說明</label>
@@ -309,6 +277,9 @@
               5.新增規格 <br>
             </p>
           </div>
+          <div>
+            <multiSelectField v-if="false"></multiSelectField>
+          </div>
 
         </div>
       </div>
@@ -318,16 +289,20 @@
 </template>
 
 <script>
-import {reactive, ref, onBeforeMount,onMounted} from "@vue/composition-api/dist/vue-composition-api";
+import {reactive, ref, onBeforeMount, onMounted} from "@vue/composition-api/dist/vue-composition-api";
 import VueBarcode from 'vue-barcode';
+import multiSelectField from '@/components/CommonComponents/MultiSelectField';
+
 import draggable from 'vuedraggable';
 export default {
   name: "upsertProductPage",
   components: {
     'barcode': VueBarcode,
+    multiSelectField,
     draggable
   },
   setup() {
+
     onMounted(()=>{
       //統一命名$UseAxios
       // this.$UseAxios.Post('',{})
@@ -458,17 +433,17 @@ export default {
         alert("error - 上傳失敗！")
       }
     }
-    const preview =ref(null)
-    const image =ref(null)
+    const preview = ref(null)
+    const image = ref(null)
 
-    const uploadFile =function (event)  {
+    const uploadFile = function (event) {
       var input = event.target;
       if (input.files) {
         let reader = new FileReader();
         reader.onload = (e) => {
           preview.value = e.target.result;
         }
-        image.value=input.files[0];
+        image.value = input.files[0];
         reader.readAsDataURL(input.files[0]);
       }
     }

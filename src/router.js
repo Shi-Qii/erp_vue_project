@@ -3,8 +3,6 @@ import Router from 'vue-router';
 import Home from './HomePage/home.vue';
 
 
-
-
 Vue.use(Router);
 /**
  * 統一由這兩修改
@@ -13,7 +11,7 @@ class DomainName {
     /**
      * vue-router內轉跳用網址
      */
-    static getUrl() {
+    static getDefUrl() {
         let def = '/keepGoingVue/';
         return def;
     }
@@ -29,7 +27,7 @@ class DomainName {
 
 export default new DomainName();
 
-let domainName = DomainName.getUrl();
+let domainName = DomainName.getDefUrl();
 
 export const router = new Router({
 
