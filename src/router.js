@@ -12,7 +12,7 @@ class DomainName {
      * vue-router內轉跳用網址
      */
     static getDefUrl() {
-        let def = '/keepGoingVue/';
+        let def = '/';
         return def;
     }
 
@@ -20,7 +20,7 @@ class DomainName {
      * axios轉跳用網址
      */
     getUrl() {
-        let def = '/keepGoingVue/';
+        let def = '/';
         return def;
     }
 }
