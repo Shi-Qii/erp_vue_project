@@ -7,7 +7,7 @@
       <!--左邊**各項選單項目新增-->
       <SideBarMenu/>
       <!--中間**主畫面通過左邊或上面、各項選單連結跳頁-->
-      <div class=" col-9">
+      <div class=" col-12">
         <router-view/>
       </div>
     </div>
