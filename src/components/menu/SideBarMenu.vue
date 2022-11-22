@@ -1,26 +1,17 @@
 <template>
-  <div class="col-2">
+  <div class="col-12">
     <div>
-      <b-sidebar id="sidebar-1" aria-modal="true" backdropprop="true" aria-label="Sidebar with custom footer"
-                 no-header shadow>
-        <template #footer="{ hide }">
-          <div class="d-flex bg-dark text-light align-items-center px-3 py-2">
-            <strong class="mr-auto"> </strong>
-            <b-button size="sm" @click="hide">Close</b-button>
-          </div>
-        </template>
-        <div class="px-3 py-2 side_Customize">
-          <div>
-            <ul class="nav mt-2" style="  display: block;">
-              <li v-for="(item, index) in routerList" :key="index+'_'">
-                <router-link :to="item.toPath" class="color_66615B">
-                  <p>{{ (++index) + '.' + item.name }}</p>
-                </router-link>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </b-sidebar>
+      <b-collapse is-nav id="collapse" >
+         <div class="px-3 py-2 ">
+           <ul class="nav mt-2" style=" background-color: #cccccc;  display: block;">
+             <li v-for="(item, index) in routerList" :key="index+'_'">
+               <router-link :to="item.toPath" class="color_66615B" v-b-toggle="'collapse'">
+                 <p>{{ (++index) + '.' + item.name }}</p>
+               </router-link>
+             </li>
+           </ul>
+         </div>
+      </b-collapse>
     </div>
   </div>
 </template>

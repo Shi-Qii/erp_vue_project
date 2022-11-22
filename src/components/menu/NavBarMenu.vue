@@ -11,7 +11,7 @@
         </router-link>
       </li>
       <li class="nav-item">
-        <b-button v-b-toggle.sidebar-1>各項選單</b-button>
+        <b-button v-b-toggle="'collapse'">各項選單</b-button>
       </li>
     </div>
 
