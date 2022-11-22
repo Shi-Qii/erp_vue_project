@@ -232,6 +232,7 @@
               3.照片 <br>
               4.條碼列印 <br>
               5.新增規格 <br>
+              6.顏色的dropdown不要自動收起 <br>
             </p>
           </div>
         </b-tab>
@@ -253,12 +254,74 @@
           <div class="row mt-3">
             <b-button-group vertical>
               <b-button v-for="(btn, idx) in colorButtonGroupObj" :key="idx" class="item "
-                        variant="outline-secondary">{{ btn.name }}
+                        variant="outline-secondary" @click="colorButton(btn)">{{ btn.name }}
+
               </b-button>
             </b-button-group>
             <div class="col-8 item"
-                 :style="{'border-color':'black','border-width':'3px','border-style':'solid','padding':'5px','width':'100%'}">
-              123
+                 :style="{'padding':'5px','width':'100%'}"
+            >
+              <div class="ml-3">
+                <template>
+                  <div>
+                    <b-form-group label-for="tags-with-dropdown">
+                      <b-form-tags id="tags-with-dropdown" v-model="selectedvalue" no-outer-focus class="mb-2">
+                        <template v-slot="{ tags, disabled, addTag, removeTag }">
+                          <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
+                            <li v-for="tag in tags" :key="tag" class="list-inline-item">
+                              <b-form-tag
+                                  @remove="removeTag(tag)"
+                                  :title="tag"
+                                  :disabled="disabled"
+                                  variant="info"
+                              >{{ tag }}
+                              </b-form-tag>
+                            </li>
+                          </ul>
+
+                          <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100" >
+                            <template #button-content>
+                              <b-icon icon="tag-fill"></b-icon>
+                              Choose tags
+                            </template>
+                            <b-dropdown-form @submit.stop.prevent="() => {}">
+                              <b-form-group
+                                  label="Search tags"
+                                  label-for="tag-search-input"
+                                  label-cols-md="auto"
+                                  class="mb-0"
+                                  label-size="sm"
+                                  :description="searchDesc"
+                                  :disabled="disabled"
+                                  v-model="colorArray[selectedColorButton.value]"
+                              >
+                                <b-form-input
+                                    v-model="search"
+                                    id="tag-search-input"
+                                    type="search"
+                                    size="sm"
+                                    autocomplete="off"
+                                ></b-form-input>
+                              </b-form-group>
+                            </b-dropdown-form>
+                            <b-dropdown-divider></b-dropdown-divider>
+                            <b-dropdown-item-button
+                                v-for="option in availableOptions"
+                                :key="option"
+                                @click="onOptionClick({ option, addTag })"
+                            >
+                              {{ option }}
+                            </b-dropdown-item-button>
+                            <b-dropdown-text v-if="availableOptions.length === 0">
+                              There are no tags available to select
+                            </b-dropdown-text>
+                          </b-dropdown>
+                        </template>
+                      </b-form-tags>
+                    </b-form-group>
+                  </div>
+                </template>
+              </div>
             </div>
           </div>
         </div>
@@ -307,7 +370,7 @@
 </template>
 
 <script>
-import {reactive, ref, onBeforeMount, onMounted} from "@vue/composition-api/dist/vue-composition-api";
+import {reactive, ref, onBeforeMount, onMounted, computed} from "@vue/composition-api/dist/vue-composition-api";
 import VueBarcode from 'vue-barcode';
 
 export default {
@@ -376,53 +439,13 @@ export default {
       sizeArray.value = sizeArr;
       // colorList
       let ColorArr = {
-        Category1: [{ //黑灰色系
-          colorNO: '1001',
-          colorName: '黑色'
-        }, {
-          colorNO: '1002',
-          colorName: '灰色'
-        }],
-        Category2: [{ //白杏淺系
-          colorNO: '2001',
-          colorName: '白色'
-        }, {
-          colorNO: '2002',
-          colorName: '杏色'
-        }, {
-          colorNO: '2003',
-          colorName: '奶茶'
-        }],
-        Category3: [{ //橘黃咖系
-          colorNO: '3001',
-          colorName: '橘色'
-        }, {
-          colorNO: '3002',
-          colorName: '卡其'
-        }],
-        Category4: [{ //紅粉色系
-          colorNO: '4001',
-          colorName: '紅色'
-        }, {
-          colorNO: '4002',
-          colorName: '粉紅色'
-        }],
-        Category5: [{ //紫藍色系
-          colorNO: '5001',
-          colorName: '紫色'
-        }, {
-          colorNO: '5002',
-          colorName: '藍色'
-        }, {
-          colorNO: '5003',
-          colorName: '天空藍'
-        }],
-        Category6: [{ //綠色色系
-          colorNO: '6001',
-          colorName: '綠色'
-        }],
-        Category7: [ //其他分類
-        ]
+        blackAndGray: ['黑色', '灰色'],
+        lightColor: ['白色', '杏色', '奶茶'],
+        yellowAndBrown: ['橘色', '卡其'],
+        redAndPink: ['紅色', '粉紅色'],
+        purpleAndBlue: ['紫色', '藍色', '天空藍'],
+        green: ['綠色'],
+        otherColor: []
       }
       colorArray.value = ColorArr;
     });
@@ -484,6 +507,7 @@ export default {
       if (item.itemIsDelete === true) return 'table-secondary'
     }
 
+    //新增品項modal--start
     const sizeButton = function (btn) {
       btn.state = btn.state === true ? false : true;
       if (btn.state) {
@@ -494,29 +518,60 @@ export default {
 
     }
 
+    let selectedColorButton = ref('');
+    const colorButton = function (btn) {
+      selectedColorButton.value = btn;
+    }
+
     const colorButtonGroupObj = [{
-      name: '黑灰色系', state: true
+      name: '黑灰色系', state: false, value: 'blackAndGray', selected: false
     }, {
-      name: '白杏淺系', state: false
+      name: '白杏淺系', state: false, value: 'lightColor', selected: false
     }, {
-      name: '橘黃咖系', state: false
+      name: '橘黃咖系', state: false, value: 'yellowAndBrown', selected: false
     }, {
-      name: '紅粉色系', state: false
+      name: '紅粉色系', state: false, value: 'redAndPink', selected: false
     }, {
-      name: '紫藍色系', state: false
+      name: '紫藍色系', state: false, value: 'purpleAndBlue', selected: false
     }, {
-      name: '綠色色系', state: false
+      name: '綠色色系', state: false, value: 'green', selected: false
     }, {
-      name: '其他分類', state: false
+      name: '其他分類', state: false, value: 'otherColor', selected: false
     }]
+
+    const options = ref(['Apple', 'Orange', 'Banana', 'Lime', 'Peach', 'Chocolate', 'Strawberry']);
+    const search = ref('');
+    const selectedvalue = ref([]);
+
+    const availableOptions = computed(() => {
+      const criteria = search.value.trim().toLowerCase();
+      const opts = options.value.filter(opt => selectedvalue.value.indexOf(opt) === -1)
+      if (search.value.trim() !== '') {
+        return opts.filter(opt => opt.toLowerCase().indexOf(criteria) > -1);
+      }
+      return opts
+    })
+
+    const searchDesc = computed(() => {
+      if (search.value.trim().toLowerCase() && selectedvalue.length === 0) {
+        return 'There are no tags matching your search criteria'
+      }
+      return ''
+    })
+
+    const onOptionClick = function ({option, addTag}) {
+      addTag(option)
+      this.search = ''
+    }
+    //新增品項modal--end
 
 
     const barcodeValue = ref('CODE39 Barcode');
 
     const newItem = function () {
-      this.$refs['newItem-modal'].show()
+      this.$refs['newItem-modal'].show();
+      selectedColorButton.value = '';
     }
-
 
     const submit = function () {
       //打api儲存更新資料，並把確認的資料往再往前端送
@@ -555,7 +610,9 @@ export default {
       submit,
       productObj, mainTableObj, rowClass, isPromo,
       sizeArray, sizeButton,
-      colorButtonGroupObj
+      colorButtonGroupObj, colorButton, selectedColorButton,
+      colorArray, onOptionClick,
+      options, search, selectedvalue, availableOptions, searchDesc
     }
   },
 
