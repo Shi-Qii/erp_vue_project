@@ -243,7 +243,7 @@
         <div class="col-2">
           <h5>尺寸</h5>
           <div class="mr-5 ml-2 mt-3">
-            <b-button v-for="(btn, idx) in sizeArray" :key="idx" class="item mt-2 ml-2" :variant="btn.variant"
+            <b-button v-for="(btn, idx) in sizeArray" :key="idx" class="item mt-2 ml-2" variant="outline-secondary"
                       @click="sizeButton(btn)" block>
               {{ btn.size }}
             </b-button>
@@ -254,7 +254,7 @@
           <div class="row mt-3">
             <b-button-group vertical>
               <b-button v-for="(btn, idx) in colorButtonGroupObj" :key="idx" class="item "
-                        variant="outline-secondary" @click="colorButton(btn)">{{ btn.name }}
+                        :variant="buttonVariant(btn, idx)" @click="colorButton(btn,idx)">{{ btn.name }}
 
               </b-button>
             </b-button-group>
@@ -262,10 +262,12 @@
                  :style="{'padding':'5px','width':'100%'}"
             >
               <div class="ml-3">
+                {{ selectedColorButton.name }}
                 <template>
-                  <div>
-                    <b-form-group label-for="tags-with-dropdown">
-                      <b-form-tags id="tags-with-dropdown" v-model="selectedvalue" no-outer-focus class="mb-2">
+                  <div class="mt-2">
+                    <b-form-group label-for="tags-withﬁ-dropdown">
+                      <b-form-tags id="tags-with-dropdown"  v-model="selectedTagValue.color"
+                                   no-outer-focus class="mb-2">
                         <template v-slot="{ tags, disabled, addTag, removeTag }">
                           <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
                             <li v-for="tag in tags" :key="tag" class="list-inline-item">
@@ -279,7 +281,8 @@
                             </li>
                           </ul>
 
-                          <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100" >
+                          <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100"
+                                      :disabled="selectedColorButton===''">
                             <template #button-content>
                               <b-icon icon="tag-fill"></b-icon>
                               Choose tags
@@ -293,7 +296,6 @@
                                   label-size="sm"
                                   :description="searchDesc"
                                   :disabled="disabled"
-                                  v-model="colorArray[selectedColorButton.value]"
                               >
                                 <b-form-input
                                     v-model="search"
@@ -308,9 +310,11 @@
                             <b-dropdown-item-button
                                 v-for="option in availableOptions"
                                 :key="option"
-                                @click="onOptionClick({ option, addTag })"
+                                @click="onOptionClick({ option, addTag },true)"
                             >
                               {{ option }}
+                              <b-icon icon="trash" @click="onOptionClick({ option, addTag },false)"
+                                      class="float-right"></b-icon>
                             </b-dropdown-item-button>
                             <b-dropdown-text v-if="availableOptions.length === 0">
                               There are no tags available to select
@@ -328,7 +332,9 @@
         <div class="col-4" :style="{'border-radius':'12px','background-color':'#F5F5F5'}">
           <div class="mt-4 mb-4">
             <h5>選取結果</h5>
-            {{ sizeArray }}
+            {{ sizeArray }} <br>
+            {{ selectedvalue }} <br>
+            {{selectedTagValue}}
             <b-button class="mt-5" variant="outline-info" block @click="addItem()">確定新增</b-button>
           </div>
         </div>
@@ -438,15 +444,17 @@ export default {
       })
       sizeArray.value = sizeArr;
       // colorList
-      let ColorArr = {
-        blackAndGray: ['黑色', '灰色'],
-        lightColor: ['白色', '杏色', '奶茶'],
-        yellowAndBrown: ['橘色', '卡其'],
-        redAndPink: ['紅色', '粉紅色'],
-        purpleAndBlue: ['紫色', '藍色', '天空藍'],
-        green: ['綠色'],
-        otherColor: []
-      }
+      let ColorArr = [
+        {
+          blackAndGray: ['黑色', '灰色'],
+          lightColor: ['白色', '杏色', '奶茶'],
+          yellowAndBrown: ['橘色', '卡其'],
+          redAndPink: ['紅色', '粉紅色'],
+          purpleAndBlue: ['紫色', '藍色', '天空藍'],
+          green: ['綠色'],
+          otherColor: []
+        }
+      ]
       colorArray.value = ColorArr;
     });
 
@@ -515,12 +523,33 @@ export default {
       } else {
         btn.variant = 'outline-secondary';
       }
-
     }
 
-    let selectedColorButton = ref('');
-    const colorButton = function (btn) {
+    let selectedColorButton = ref('');  //顏色-分類群組的按鈕-目前點選
+    const colorButton = function (btn,idx) { //顏色-分類群組的按鈕 ＠onclick
+      //把目前點選的按鈕狀態存在selectedColorButton
       selectedColorButton.value = btn;
+      //1. "已選取的tag"v-model綁定selectedTagValue，需把所選顏色資料存回selectedvalue
+      if (selectedTagValue.color.length>0){selectedvalue[selectedTagValue.index].color=selectedTagValue.color}
+      //2. 存取現在按下的button的index（同顏色資料的順序）
+      selectedTagValue.index=idx;
+      //3. 把已經點選過的顏色撈出來到畫面上
+      selectedTagValue.color=selectedvalue[selectedTagValue.index].color;
+    }
+
+    const buttonVariant= function (btn,idx) {
+      if (selectedTagValue.color.length===0 && idx===selectedTagValue.index) {
+        // 1. selectedTagValue(目前選取)無資料
+        return 'outline-secondary';
+      }else if(selectedTagValue.color.length>0 && idx===selectedTagValue.index){
+        // 1. selectedTagValue(目前選取)有資料
+        return 'secondary';
+      }else if (selectedvalue[idx].color.length>0){
+      // 3. 如果selectedvalue的color裡面有資料
+        return 'secondary';
+      }else {
+        return 'outline-secondary';
+      }
     }
 
     const colorButtonGroupObj = [{
@@ -539,18 +568,36 @@ export default {
       name: '其他分類', state: false, value: 'otherColor', selected: false
     }]
 
-    const options = ref(['Apple', 'Orange', 'Banana', 'Lime', 'Peach', 'Chocolate', 'Strawberry']);
+    const options = ref();
     const search = ref('');
-    const selectedvalue = ref([]);
+    const selectedTagValue=reactive({index:-1,color:[]})
+    let selectedvalue = reactive(
+        [{name: 'blackAndGray', color: []},
+          {name: 'lightColor', color: []},
+          {name: 'yellowAndBrown', color: []},
+          {name: 'redAndPink', color: []},
+          {name: 'purpleAndBlue', color: []},
+          {name: 'green', color: []},
+          {name: 'otherColor', color: []}]
+    )
 
     const availableOptions = computed(() => {
+      options.value = getColorArr();
       const criteria = search.value.trim().toLowerCase();
-      const opts = options.value.filter(opt => selectedvalue.value.indexOf(opt) === -1)
+      const opts = options.value.filter(opt => selectedTagValue.color.indexOf(opt) === -1)
       if (search.value.trim() !== '') {
         return opts.filter(opt => opt.toLowerCase().indexOf(criteria) > -1);
       }
       return opts
     })
+
+    const getColorArr = function () {
+      let result = colorArray.value.filter(f => {
+        return f[(selectedColorButton.value).value];
+      })[0]
+
+      return result[(selectedColorButton.value).value];
+    }
 
     const searchDesc = computed(() => {
       if (search.value.trim().toLowerCase() && selectedvalue.length === 0) {
@@ -559,10 +606,19 @@ export default {
       return ''
     })
 
-    const onOptionClick = function ({option, addTag}) {
-      addTag(option)
+    let delState = true;
+    const onOptionClick = function ({option, addTag}, isSelect) {
+      if (isSelect) {
+        if (delState) {
+          addTag(option)
+        }
+        delState = true;
+      } else {
+        delState = false;
+      }
       this.search = ''
     }
+
     //新增品項modal--end
 
 
@@ -610,9 +666,9 @@ export default {
       submit,
       productObj, mainTableObj, rowClass, isPromo,
       sizeArray, sizeButton,
-      colorButtonGroupObj, colorButton, selectedColorButton,
+      colorButtonGroupObj, colorButton, selectedColorButton,buttonVariant,
       colorArray, onOptionClick,
-      options, search, selectedvalue, availableOptions, searchDesc
+      options, search, selectedvalue, availableOptions, searchDesc,selectedTagValue
     }
   },
 
