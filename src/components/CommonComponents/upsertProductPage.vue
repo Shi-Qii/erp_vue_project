@@ -255,7 +255,7 @@
             <b-button-group vertical>
               <b-button v-for="(btn, idx) in colorButtonGroupObj" :key="idx" class="item "
                         :variant="buttonVariant(btn, idx)" @click="colorButton(btn,idx)">
-                {{ btn.name }} ( {{selectedvalue[idx].color.length+(selectedTagValue.index===idx?selectedTagValue.color.length:0)}} )
+                {{ btn.name }} ( {{selectedTagValue.index===idx?selectedTagValue.color.length:selectedvalue[idx].color.length}} )
               </b-button>
             </b-button-group>
             <div class="col-8 item"
