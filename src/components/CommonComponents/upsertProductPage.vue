@@ -254,8 +254,8 @@
           <div class="row mt-3">
             <b-button-group vertical>
               <b-button v-for="(btn, idx) in colorButtonGroupObj" :key="idx" class="item "
-                        :variant="buttonVariant(btn, idx)" @click="colorButton(btn,idx)">{{ btn.name }}
-
+                        :variant="buttonVariant(btn, idx)" @click="colorButton(btn,idx)">
+                {{ btn.name }} ( {{selectedvalue[idx].color.length+(selectedTagValue.index===idx?selectedTagValue.color.length:0)}} )
               </b-button>
             </b-button-group>
             <div class="col-8 item"
@@ -289,7 +289,7 @@
                             </template>
                             <b-dropdown-form @submit.stop.prevent="() => {}">
                               <b-form-group
-                                  label="Search tags"
+                                  label="Search/add tags"
                                   label-for="tag-search-input"
                                   label-cols-md="auto"
                                   class="mb-0"
@@ -317,7 +317,8 @@
                                       class="float-right"></b-icon>
                             </b-dropdown-item-button>
                             <b-dropdown-text v-if="availableOptions.length === 0">
-                              There are no tags available to select
+                              no tag
+                              <b-button class="float-right" size="sm" variant="outline-info" @click="addNewTag()" v-if="search.trim().length>0">add</b-button>
                             </b-dropdown-text>
                           </b-dropdown>
                         </template>
@@ -444,17 +445,15 @@ export default {
       })
       sizeArray.value = sizeArr;
       // colorList
-      let ColorArr = [
-        {
-          blackAndGray: ['黑色', '灰色'],
-          lightColor: ['白色', '杏色', '奶茶'],
-          yellowAndBrown: ['橘色', '卡其'],
-          redAndPink: ['紅色', '粉紅色'],
-          purpleAndBlue: ['紫色', '藍色', '天空藍'],
-          green: ['綠色'],
-          otherColor: []
-        }
-      ]
+      let ColorArr = reactive(
+          [{name: 'blackAndGray', color: ['黑色', '灰色']},
+            {name: 'lightColor', color: ['白色', '杏色', '奶茶']},
+            {name: 'yellowAndBrown', color: ['黃色','橘紅', '卡其']},
+            {name: 'redAndPink', color: ['紅色', '粉紅']},
+            {name: 'purpleAndBlue', color: ['紫色', '藍色']},
+            {name: 'green', color: ['綠色']},
+            {name: 'otherColor', color: []}]
+      )
       colorArray.value = ColorArr;
     });
 
@@ -463,7 +462,7 @@ export default {
     let stickyHeader = ref(true);
     const checked = ref(productObj.value.checked);
     let sizeArray = ref([]);
-    let colorArray = ref([]);
+    let colorArray = reactive([]);
     const mainTableObj = reactive({
       'fields': [
         {label: '照片', key: 'pic', sortable: true},
@@ -530,22 +529,15 @@ export default {
       //把目前點選的按鈕狀態存在selectedColorButton
       selectedColorButton.value = btn;
       //1. "已選取的tag"v-model綁定selectedTagValue，需把所選顏色資料存回selectedvalue
-      if (selectedTagValue.color.length>0){selectedvalue[selectedTagValue.index].color=selectedTagValue.color}
+      if (selectedTagValue.index>-1){selectedvalue[selectedTagValue.index].color=selectedTagValue.color}
       //2. 存取現在按下的button的index（同顏色資料的順序）
       selectedTagValue.index=idx;
       //3. 把已經點選過的顏色撈出來到畫面上
       selectedTagValue.color=selectedvalue[selectedTagValue.index].color;
     }
 
-    const buttonVariant= function (btn,idx) {
-      if (selectedTagValue.color.length===0 && idx===selectedTagValue.index) {
-        // 1. selectedTagValue(目前選取)無資料
-        return 'outline-secondary';
-      }else if(selectedTagValue.color.length>0 && idx===selectedTagValue.index){
-        // 1. selectedTagValue(目前選取)有資料
-        return 'secondary';
-      }else if (selectedvalue[idx].color.length>0){
-      // 3. 如果selectedvalue的color裡面有資料
+    const buttonVariant= function (btn,idx) { //顏色的分類按鈕-選取變色
+      if (idx===selectedTagValue.index) {
         return 'secondary';
       }else {
         return 'outline-secondary';
@@ -553,19 +545,19 @@ export default {
     }
 
     const colorButtonGroupObj = [{
-      name: '黑灰色系', state: false, value: 'blackAndGray', selected: false
+      name: '黑灰色系',value: 'blackAndGray', selected: false
     }, {
-      name: '白杏淺系', state: false, value: 'lightColor', selected: false
+      name: '白杏淺系',value: 'lightColor', selected: false
     }, {
-      name: '橘黃咖系', state: false, value: 'yellowAndBrown', selected: false
+      name: '橘黃咖系',value: 'yellowAndBrown', selected: false
     }, {
-      name: '紅粉色系', state: false, value: 'redAndPink', selected: false
+      name: '紅粉色系',value: 'redAndPink', selected: false
     }, {
-      name: '紫藍色系', state: false, value: 'purpleAndBlue', selected: false
+      name: '紫藍色系',value: 'purpleAndBlue', selected: false
     }, {
-      name: '綠色色系', state: false, value: 'green', selected: false
+      name: '綠色色系',value: 'green', selected: false
     }, {
-      name: '其他分類', state: false, value: 'otherColor', selected: false
+      name: '其他分類',value: 'otherColor', selected: false
     }]
 
     const options = ref();
@@ -593,10 +585,9 @@ export default {
 
     const getColorArr = function () {
       let result = colorArray.value.filter(f => {
-        return f[(selectedColorButton.value).value];
+        return f.name===(selectedColorButton.value).value;
       })[0]
-
-      return result[(selectedColorButton.value).value];
+      return result.color;
     }
 
     const searchDesc = computed(() => {
@@ -615,8 +606,15 @@ export default {
         delState = true;
       } else {
         delState = false;
+        alert("index"+selectedTagValue.index+" "+"tag:"+option+" ---delete")
       }
       this.search = ''
+    }
+
+    const addNewTag = function (){
+      colorArray.value[selectedTagValue.index].color.push(search.value);
+      selectedTagValue.color.push(search.value);
+      search.value=''
     }
 
     //新增品項modal--end
@@ -668,7 +666,8 @@ export default {
       sizeArray, sizeButton,
       colorButtonGroupObj, colorButton, selectedColorButton,buttonVariant,
       colorArray, onOptionClick,
-      options, search, selectedvalue, availableOptions, searchDesc,selectedTagValue
+      options, search, selectedvalue, availableOptions, searchDesc,selectedTagValue,
+      addNewTag
     }
   },
 
