@@ -243,7 +243,7 @@
         <div class="col-2">
           <h5>尺寸</h5>
           <div class="mr-5 ml-2 mt-3">
-            <b-button v-for="(btn, idx) in sizeArray" :key="idx" class="item mt-2 ml-2" variant="outline-secondary"
+            <b-button v-for="(btn, idx) in sizeArray" :key="idx" class="item mt-2 ml-2" :variant="btn.variant"
                       @click="sizeButton(btn)" block>
               {{ btn.size }}
             </b-button>
