@@ -625,6 +625,7 @@ export default {
     const newItem = function () {
       this.$refs['newItem-modal'].show();
       selectedColorButton.value = '';
+      selectedTagValue.index=-1
     }
 
     const submit = function () {
