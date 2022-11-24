@@ -125,22 +125,9 @@
                     <text style="color:lightskyblue"></text>
                     <div class="col-md-5 offset-md-1">
 
-                      <div class="form-group">
-                        <b-form-file accept="image/jpeg, image/png, image/gif" @change="uploadFile">
-                          <b-button @click="uploadFile">
-                            <b-icon icon="search"></b-icon>
-                          </b-button>
-                        </b-form-file>
-                        <div class="border p-2 mt-3">
-
-                          <template v-if="preview">
-                            <img :src="preview" class="img-fluid"/>
-                            <p class="mb-0">file name: {{ image.name }}</p>
-                            <p class="mb-0">size: {{ image.size / 1024 }}KB</p>
-                          </template>
-                        </div>
-                      </div>
-
+                      <uploader
+                          v-model="fileList"
+                      ></uploader>
                     </div>
                   </b-col>
                 </div>
@@ -379,11 +366,13 @@
 <script>
 import {reactive, ref, onBeforeMount, onMounted, computed} from "@vue/composition-api/dist/vue-composition-api";
 import VueBarcode from 'vue-barcode';
+import Uploader from "vux-uploader-component";
 
 export default {
   name: "upsertProductPage",
   components: {
     'barcode': VueBarcode,
+    Uploader
   },
   setup() {
     onMounted(() => {
@@ -621,6 +610,7 @@ export default {
 
 
     const barcodeValue = ref('CODE39 Barcode');
+    const fileList = ref([]);
 
     const newItem = function () {
       this.$refs['newItem-modal'].show();
@@ -637,25 +627,10 @@ export default {
         alert("error - 上傳失敗！")
       }
     }
-    const preview = ref(null)
-    const image = ref(null)
 
-    const uploadFile = function (event) {
-      var input = event.target;
-      if (input.files) {
-        let reader = new FileReader();
-        reader.onload = (e) => {
-          preview.value = e.target.result;
-        }
-        image.value = input.files[0];
-        reader.readAsDataURL(input.files[0]);
-      }
-    }
 
     return {
-      image,
-      preview,
-      uploadFile,
+      fileList,
       stickyHeader,
       checked,
       addRow,
