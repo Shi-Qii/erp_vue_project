@@ -30,9 +30,6 @@
                 <div class="col-md-5">
                   <div class="form-group pl-5">
                     <div>商品狀態</div>
-                    <!--                      <b-form-checkbox class="pt-2" v-model="productObj.productIsActive" name="check-button" switch>-->
-                    <!--                        <b> (狀態: {{ productObj.productIsActive ? '上架' : '下架' }})</b>-->
-                    <!--                      </b-form-checkbox>-->
                     <div class="pt-3">
                       <toggle-button :value="productObj.productIsActive" color="#12A3B8" :sync="true" :labels="true"
                                      v-model="productObj.productIsActive"/>
@@ -146,7 +143,6 @@
                   <div class="form-group">
                     <label>項目列表</label>
                     <div>
-                      <b-button variant="outline-secondary" @click="addRow()">單筆新增</b-button>
                       <b-button variant="outline-secondary" class="ml-2" @click="newItem()">新增規格</b-button>
                     </div>
                   </div>
@@ -165,7 +161,6 @@
                           class="text-center text-nowrap"
                           :items="productObj.list"
                           :fields="mainTableObj.fields"
-                          :tbody-tr-class="rowClass"
                           sort-icon-rigth
                           sticky-header="1000px"
                           responsive
@@ -228,7 +223,7 @@
     <b-modal ref="newItem-modal" size="xl" hide-footer scrollable title="新增規格">
       <div class="row justify-content-md-center">
         <div class="col-2">
-          <h5>尺寸</h5>
+          <h5 class="ml-4">尺寸</h5>
           <div class="mr-5 ml-2 mt-3">
             <b-button v-for="(btn, idx) in sizeArray" :key="idx" class="item mt-2 ml-2" :variant="btn.variant"
                       @click="sizeButton(btn)" block>
@@ -241,19 +236,20 @@
           <div class="row mt-3">
             <b-button-group vertical>
               <b-button v-for="(btn, idx) in colorButtonGroupObj" :key="idx" class="item "
-                        :variant="buttonVariant(btn, idx)" @click="colorButton(btn,idx)">
-                {{ btn.name }} ( {{selectedTagValue.index===idx?selectedTagValue.color.length:selectedvalue[idx].color.length}} )
+                        :variant="buttonVariant(btn)" @click="colorButton(btn)">
+                {{ btn.name }} (
+                {{ options.name === btn.name ? options.color.length : selectedValue[btn.ref].color.length }} )
               </b-button>
             </b-button-group>
             <div class="col-8 item"
                  :style="{'padding':'5px','width':'100%'}"
             >
               <div class="ml-3">
-                {{ selectedColorButton.name }}
+                {{ options.name }}
                 <template>
                   <div class="mt-2">
                     <b-form-group label-for="tags-withﬁ-dropdown">
-                      <b-form-tags id="tags-with-dropdown"  v-model="selectedTagValue.color"
+                      <b-form-tags id="tags-with-dropdown" v-model="options.color"
                                    no-outer-focus class="mb-2">
                         <template v-slot="{ tags, disabled, addTag, removeTag }">
                           <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
@@ -269,7 +265,7 @@
                           </ul>
 
                           <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100"
-                                      :disabled="selectedColorButton===''">
+                                      :disabled="options.ref===''">
                             <template #button-content>
                               <b-icon icon="tag-fill"></b-icon>
                               Choose tags
@@ -281,7 +277,6 @@
                                   label-cols-md="auto"
                                   class="mb-0"
                                   label-size="sm"
-                                  :description="searchDesc"
                                   :disabled="disabled"
                               >
                                 <b-form-input
@@ -297,15 +292,17 @@
                             <b-dropdown-item-button
                                 v-for="option in availableOptions"
                                 :key="option"
-                                @click="onOptionClick({ option, addTag },true)"
+                                @click="onOptionClick({option , addTag },true)"
                             >
                               {{ option }}
-                              <b-icon icon="trash" @click="onOptionClick({ option, addTag },false)"
+                              <b-icon icon="trash" @click="onOptionClick({option , addTag },false)"
                                       class="float-right"></b-icon>
                             </b-dropdown-item-button>
-                            <b-dropdown-text v-if="availableOptions.length === 0">
+                            <b-dropdown-text v-if="availableOptions.length=== 0  ">
                               no tag
-                              <b-button class="float-right" size="sm" variant="outline-info" @click="addNewTag()" v-if="search.trim().length>0">add</b-button>
+                              <b-button class="float-right" size="sm" variant="outline-info" @click="addNewTag()"
+                                        v-if="search.trim().length>0">add
+                              </b-button>
                             </b-dropdown-text>
                           </b-dropdown>
                         </template>
@@ -320,10 +317,17 @@
         <div class="col-4" :style="{'border-radius':'12px','background-color':'#F5F5F5'}">
           <div class="mt-4 mb-4">
             <h5>選取結果</h5>
-            {{ sizeArray }} <br>
-            {{ selectedvalue }} <br>
-            {{selectedTagValue}}
-            <b-button class="mt-5" variant="outline-info" block @click="addItem()">確定新增</b-button>
+            <div style="text-align:center" class="mt-4">
+              <div class="row mt-2" v-for="(value,index) in getSelectedResult.size" :key="index" >
+                <div class="col-3" style="text-align:right">
+                  <b-badge variant="info" >{{ value.size }}</b-badge>
+                </div>
+                <div class="col-8" style="text-align:left">
+                  <b-badge variant="info" v-for="(col,i) in getSelectedResult.color" :key="i" class="mr-2" >{{ col.color }}</b-badge>
+                </div>
+              </div>
+            </div>
+            <b-button class="mt-5" variant="outline-info" block @click="addRow()">確定新增-共{{getSelectedResult.num }}筆</b-button>
           </div>
         </div>
       </div>
@@ -397,7 +401,7 @@ export default {
         list: [{
           itemIsActive: true,
           itemColor: '黑色',
-          itemColorNO: '123',
+          itemColorCategory: 'blackWhiteAndGray',
           itemSize: 'F',
           itemSizeNo: '123',
           itemManufacturerNo: '1253',
@@ -409,7 +413,7 @@ export default {
         }, {
           itemIsActive: true,
           itemColor: '藍色',
-          itemColorNO: '123',
+          itemColorCategory: 'purpleAndBlue',
           itemSize: 'F',
           itemSizeNo: '123',
           itemManufacturerNo: '1253',
@@ -434,16 +438,18 @@ export default {
       })
       sizeArray.value = sizeArr;
       // colorList
-      let ColorArr = reactive(
-          [{name: 'blackAndGray', color: ['黑色', '灰色']},
-            {name: 'lightColor', color: ['白色', '杏色', '奶茶']},
-            {name: 'yellowAndBrown', color: ['黃色','橘紅', '卡其']},
-            {name: 'redAndPink', color: ['紅色', '粉紅']},
-            {name: 'purpleAndBlue', color: ['紫色', '藍色']},
-            {name: 'green', color: ['綠色']},
-            {name: 'otherColor', color: []}]
+      let ColorArr = reactive(     //所選清單-各分類目前所選取的顏色清單
+          {
+            'blackWhiteAndGray': {color: ['黑色', '白色', '灰色']},
+            'lightColor': {color: ['杏色', '奶茶']},
+            'yellowAndBrown': {color: ['黃色', '橘紅', '卡其']},
+            'redAndPink': {color: ['紅色', '粉紅']},
+            'purpleAndBlue': {color: ['紫色', '藍色']},
+            'green': {color: ['綠色']},
+            'otherColor': {color: []},
+          }
       )
-      colorArray.value = ColorArr;
+      colorArray = ColorArr;
     });
 
     let productObj = ref([]);
@@ -467,22 +473,6 @@ export default {
       ],
     })
 
-    const addRow = () => {
-      productObj.value.list.push({
-            itemIsActive: true,
-            itemColor: '白色',
-            itemSize: 'F',
-            itemManufacturerNo: '1253',
-            itemCost: '200',
-            itemPrice: 500,
-            itemNo: '',
-            itemBrandNo: '',
-            itemInStock: false,
-            itemIsDelete: false,
-          }
-      )
-    }
-
     const brandTableObj = reactive({
       'fields': [
         {label: '顏色', key: 'itemColor', sortable: true},
@@ -504,6 +494,20 @@ export default {
     }
 
     //新增品項modal--start
+    //＠click新增規格按鈕
+    const newItem = function () {
+      this.$refs['newItem-modal'].show();
+      cleanAllButton()
+    }
+    const cleanAllButton = function () {
+      options.name = '';
+      options.ref = '';
+      options.color = [];
+      Object.values(selectedValue).forEach(f=>{f.color=[]})
+      colorButtonGroupObj.forEach(f=>{f.selected=false})
+      sizeArray.value.forEach(f=>{f.state=false;f.variant='outline-secondary'})
+    }
+    //size
     const sizeButton = function (btn) {
       btn.state = btn.state === true ? false : true;
       if (btn.state) {
@@ -512,111 +516,135 @@ export default {
         btn.variant = 'outline-secondary';
       }
     }
-
-    let selectedColorButton = ref('');  //顏色-分類群組的按鈕-目前點選
-    const colorButton = function (btn,idx) { //顏色-分類群組的按鈕 ＠onclick
-      //把目前點選的按鈕狀態存在selectedColorButton
-      selectedColorButton.value = btn;
-      //1. "已選取的tag"v-model綁定selectedTagValue，需把所選顏色資料存回selectedvalue
-      if (selectedTagValue.index>-1){selectedvalue[selectedTagValue.index].color=selectedTagValue.color}
-      //2. 存取現在按下的button的index（同顏色資料的順序）
-      selectedTagValue.index=idx;
-      //3. 把已經點選過的顏色撈出來到畫面上
-      selectedTagValue.color=selectedvalue[selectedTagValue.index].color;
+    //color
+    const search = ref(''); //查詢-查詢的tag
+    const options = reactive({name: '', ref: '', color: []})  //目前選取-目前所點選的顏色分類的名字、在此分類中所選取的顏色tag
+    let selectedValue = reactive(     //所選清單-各分類目前所選取的顏色清單
+        {
+          'blackWhiteAndGray': {ref: 'blackWhiteAndGray', color: []},
+          'lightColor': {ref: 'lightColor', color: []},
+          'yellowAndBrown': {ref: 'yellowAndBrown', color: []},
+          'redAndPink': {ref: 'redAndPink', color: []},
+          'purpleAndBlue': {ref: 'purpleAndBlue', color: []},
+          'green': {ref: 'green', color: []},
+          'otherColor': {ref: 'otherColor', color: []},
+        }
+    )
+    const colorButton = function (btn) { //＠onclick顏色-分類群組的按鈕
+      if (options.ref !== '') {  //如果有點選過顏色的分類按鈕
+        selectedValue[options.ref].color = options.color  //把目前所選取的顏色存回所選清單
+      }
+      options.ref = btn.ref;  //把資料更新進目前選取
+      options.name = btn.name;
+      options.color = selectedValue[btn.ref].color;  //把所選清單對應的顏色撈到目前選取的顏色
     }
-
-    const buttonVariant= function (btn,idx) { //顏色的分類按鈕-選取變色
-      if (idx===selectedTagValue.index) {
+    const buttonVariant = function (btn) { //顏色的分類按鈕-選取變色
+      if (options.ref === btn.ref) {
         return 'secondary';
-      }else {
+      } else {
         return 'outline-secondary';
       }
     }
-
     const colorButtonGroupObj = [{
-      name: '黑灰色系',value: 'blackAndGray', selected: false
+      name: '黑白灰系', ref: 'blackWhiteAndGray', selected: false
     }, {
-      name: '白杏淺系',value: 'lightColor', selected: false
+      name: '米杏淺系', ref: 'lightColor', selected: false
     }, {
-      name: '橘黃咖系',value: 'yellowAndBrown', selected: false
+      name: '橘黃咖系', ref: 'yellowAndBrown', selected: false
     }, {
-      name: '紅粉色系',value: 'redAndPink', selected: false
+      name: '紅粉色系', ref: 'redAndPink', selected: false
     }, {
-      name: '紫藍色系',value: 'purpleAndBlue', selected: false
+      name: '紫藍色系', ref: 'purpleAndBlue', selected: false
     }, {
-      name: '綠色色系',value: 'green', selected: false
+      name: '綠色色系', ref: 'green', selected: false
     }, {
-      name: '其他分類',value: 'otherColor', selected: false
+      name: '其他分類', ref: 'otherColor', selected: false
     }]
-
-    const options = ref();
-    const search = ref('');
-    const selectedTagValue=reactive({index:-1,color:[]})
-    let selectedvalue = reactive(
-        [{name: 'blackAndGray', color: []},
-          {name: 'lightColor', color: []},
-          {name: 'yellowAndBrown', color: []},
-          {name: 'redAndPink', color: []},
-          {name: 'purpleAndBlue', color: []},
-          {name: 'green', color: []},
-          {name: 'otherColor', color: []}]
-    )
-
     const availableOptions = computed(() => {
-      options.value = getColorArr();
+      if (colorArray[options.ref] === undefined) {
+        return [];
+      }
+      options.value = colorArray[options.ref].color;
       const criteria = search.value.trim().toLowerCase();
-      const opts = options.value.filter(opt => selectedTagValue.color.indexOf(opt) === -1)
+      const opts = options.value.filter(opt => options.color.indexOf(opt) === -1)
       if (search.value.trim() !== '') {
         return opts.filter(opt => opt.toLowerCase().indexOf(criteria) > -1);
       }
       return opts
     })
-
-    const getColorArr = function () {
-      let result = colorArray.value.filter(f => {
-        return f.name===(selectedColorButton.value).value;
-      })[0]
-      return result.color;
-    }
-
-    const searchDesc = computed(() => {
-      if (search.value.trim().toLowerCase() && selectedvalue.length === 0) {
-        return 'There are no tags matching your search criteria'
-      }
-      return ''
-    })
-
     let delState = true;
     const onOptionClick = function ({option, addTag}, isSelect) {
       if (isSelect) {
-        if (delState) {
-          addTag(option)
-        }
+        //tag加入上方選取清單
+        delState ? addTag(option) : ''
         delState = true;
       } else {
+        //tag從清單內刪除
+        colorArray[options.ref].color = colorArray[options.ref].color.filter(f => {
+          return f !== option
+        })
         delState = false;
-        alert("index"+selectedTagValue.index+" "+"tag:"+option+" ---delete")
       }
       this.search = ''
     }
-
-    const addNewTag = function (){
-      colorArray.value[selectedTagValue.index].color.push(search.value);
-      selectedTagValue.color.push(search.value);
-      search.value=''
+    const addNewTag = function () {
+      let isExit = options.color.some((f) => f === search.value);
+      if (!isExit) {
+        colorArray[options.ref].color.push(search.value);
+        options.color.push(search.value);
+      }
+      search.value = ''
     }
-
+    const getSelectedResult = computed(() => {
+      const color = [];
+      Object.values(selectedValue).forEach(f => {
+        const colList = options.ref === f.ref ? options.color : f.color;
+        colList.forEach(c => {
+          const obj = {color: c, ref: f.ref}
+          color.push(obj);
+        })
+      })
+      const size = [];
+      sizeArray.value.forEach(f => {
+        if (f.state === true) {
+          size.push(f);
+        }
+      })
+      const result={
+        color:color,
+        size:size,
+        num:color.length*size.length
+      }
+      return result;
+    })
+    const addRow = function () {
+      const obj=getSelectedResult.value;
+      obj.size.forEach(size=>{
+        obj.color.forEach(color=>{
+          productObj.value.list.push({
+                itemIsActive: true,
+                itemColor: color.color,
+                itemColorCategory: 'color.ref',
+                itemSize: size.size,
+                itemSizeNo: size.id,
+                itemManufacturerNo: productObj.value.productManufacturerNo,
+                itemCost: '',
+                itemPrice: '',
+                itemNo: '',
+                itemBrandNo: '',
+                itemInStock:false
+              }
+          )
+        })
+      })
+      this.$refs['newItem-modal'].hide()
+    }
     //新增品項modal--end
 
 
     const barcodeValue = ref('CODE39 Barcode');
     const fileList = ref([]);
 
-    const newItem = function () {
-      this.$refs['newItem-modal'].show();
-      selectedColorButton.value = '';
-      selectedTagValue.index=-1
-    }
 
     const submit = function () {
       //打api儲存更新資料，並把確認的資料往再往前端送
@@ -640,12 +668,13 @@ export default {
       submit,
       productObj, mainTableObj, rowClass, isPromo,
       sizeArray, sizeButton,
-      colorButtonGroupObj, colorButton, selectedColorButton,buttonVariant,
+      colorButtonGroupObj, colorButton, buttonVariant,
       colorArray, onOptionClick,
-      options, search, selectedvalue, availableOptions, searchDesc,selectedTagValue,
-      addNewTag
+      options, search, selectedValue, availableOptions,
+      addNewTag, getSelectedResult
     }
-  },
+  }
+  ,
 
 
 }
