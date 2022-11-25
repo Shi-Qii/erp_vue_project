@@ -234,13 +234,15 @@
         <div class="col-5">
           <h5>顏色</h5>
           <div class="row mt-3">
-            <b-button-group vertical>
-              <b-button v-for="(btn, idx) in colorButtonGroupObj" :key="idx" class="item "
-                        :variant="buttonVariant(btn)" @click="colorButton(btn)">
-                {{ btn.name }} (
-                {{ options.name === btn.name ? options.color.length : selectedValue[btn.ref].color.length }} )
-              </b-button>
-            </b-button-group>
+            <div>
+              <b-button-group vertical>
+                <b-button v-for="(btn, idx) in colorButtonGroupObj" :key="idx" class="item "
+                          :variant="buttonVariant(btn)" @click="colorButton(btn)">
+                  {{ btn.name }} (
+                  {{ options.name === btn.name ? options.color.length : selectedValue[btn.ref].color.length }} )
+                </b-button>
+              </b-button-group>
+            </div>
             <div class="col-8 item"
                  :style="{'padding':'5px','width':'100%'}"
             >
@@ -248,7 +250,7 @@
                 {{ options.name }}
                 <template>
                   <div class="mt-2">
-                    <b-form-group label-for="tags-withﬁ-dropdown">
+                    <b-form-group label-for="tags-withﬁ-dropdown" v-if="options.ref!==''">
                       <b-form-tags id="tags-with-dropdown" v-model="options.color"
                                    no-outer-focus class="mb-2">
                         <template v-slot="{ tags, disabled, addTag, removeTag }">
@@ -264,47 +266,47 @@
                             </li>
                           </ul>
 
-                          <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100"
-                                      :disabled="options.ref===''">
+                          <b-card size="sm" variant="outline-secondary" block menu-class="w-100"
+                                 >
                             <template #button-content>
                               <b-icon icon="tag-fill"></b-icon>
                               Choose tags
                             </template>
-                            <b-dropdown-form @submit.stop.prevent="() => {}">
-                              <b-form-group
-                                  label="Search/add tags"
-                                  label-for="tag-search-input"
-                                  label-cols-md="auto"
-                                  class="mb-0"
-                                  label-size="sm"
-                                  :disabled="disabled"
-                              >
-                                <b-form-input
-                                    v-model="search"
-                                    id="tag-search-input"
-                                    type="search"
-                                    size="sm"
-                                    autocomplete="off"
-                                ></b-form-input>
-                              </b-form-group>
-                            </b-dropdown-form>
-                            <b-dropdown-divider></b-dropdown-divider>
-                            <b-dropdown-item-button
+                            <b-form-group
+                                label="Search/add tags"
+                                label-for="tag-search-input"
+                                label-cols-md="auto"
+                                class="mb-0"
+                                label-size="sm"
+                                :disabled="disabled"
+                            >
+                              <b-form-input
+                                  v-model="search"
+                                  id="tag-search-input"
+                                  type="search"
+                                  size="sm"
+                                  autocomplete="off"
+                                  class="mb-3"
+                              ></b-form-input>
+                            </b-form-group>
+                            <b-button
                                 v-for="option in availableOptions"
                                 :key="option"
                                 @click="onOptionClick({option , addTag },true)"
-                            >
-                              {{ option }}
-                              <b-icon icon="trash" @click="onOptionClick({option , addTag },false)"
+                                size="sm"
+                                variant="outline-secondary"
+                                class="mr-1 mb-1 float-left"
+                            >{{ option }}
+                              <b-icon icon="x" @click="onOptionClick({option , addTag },false)"
                                       class="float-right"></b-icon>
-                            </b-dropdown-item-button>
-                            <b-dropdown-text v-if="availableOptions.length=== 0  ">
+                            </b-button>
+                            <b-text v-if="availableOptions.length=== 0  ">
                               no tag
                               <b-button class="float-right" size="sm" variant="outline-info" @click="addNewTag()"
                                         v-if="search.trim().length>0">add
                               </b-button>
-                            </b-dropdown-text>
-                          </b-dropdown>
+                            </b-text>
+                          </b-card>
                         </template>
                       </b-form-tags>
                     </b-form-group>
@@ -318,16 +320,22 @@
           <div class="mt-4 mb-4">
             <h5>選取結果</h5>
             <div style="text-align:center" class="mt-4">
-              <div class="row mt-2" v-for="(value,index) in getSelectedResult.size" :key="index" >
+              <div class="row mt-2" v-for="(value,index) in getSelectedResult.size" :key="index">
                 <div class="col-3" style="text-align:right">
-                  <b-badge variant="info" >{{ value.size }}</b-badge>
+                  <b-badge variant="info">{{ value.size }}</b-badge>
                 </div>
                 <div class="col-8" style="text-align:left">
-                  <b-badge variant="info" v-for="(col,i) in getSelectedResult.color" :key="i" class="mr-2" >{{ col.color }}</b-badge>
+                  <b-badge variant="info" v-for="(col,i) in getSelectedResult.color" :key="i" class="mr-2">{{
+                      col.color
+                    }}
+                  </b-badge>
                 </div>
               </div>
             </div>
-            <b-button class="mt-5" variant="outline-info" block @click="addRow()">確定新增-共{{getSelectedResult.num }}筆</b-button>
+            <b-button class="mt-5" variant="outline-info" block @click="addRow()">確定新增-共{{
+                getSelectedResult.num
+              }}筆
+            </b-button>
           </div>
         </div>
       </div>
@@ -500,12 +508,20 @@ export default {
       cleanAllButton()
     }
     const cleanAllButton = function () {
+      search.value='';
       options.name = '';
       options.ref = '';
       options.color = [];
-      Object.values(selectedValue).forEach(f=>{f.color=[]})
-      colorButtonGroupObj.forEach(f=>{f.selected=false})
-      sizeArray.value.forEach(f=>{f.state=false;f.variant='outline-secondary'})
+      Object.values(selectedValue).forEach(f => {
+        f.color = []
+      })
+      colorButtonGroupObj.forEach(f => {
+        f.selected = false
+      })
+      sizeArray.value.forEach(f => {
+        f.state = false;
+        f.variant = 'outline-secondary'
+      })
     }
     //size
     const sizeButton = function (btn) {
@@ -591,7 +607,6 @@ export default {
       let isExit = options.color.some((f) => f === search.value);
       if (!isExit) {
         colorArray[options.ref].color.push(search.value);
-        options.color.push(search.value);
       }
       search.value = ''
     }
@@ -610,17 +625,17 @@ export default {
           size.push(f);
         }
       })
-      const result={
-        color:color,
-        size:size,
-        num:color.length*size.length
+      const result = {
+        color: color,
+        size: size,
+        num: color.length * size.length
       }
       return result;
     })
     const addRow = function () {
-      const obj=getSelectedResult.value;
-      obj.size.forEach(size=>{
-        obj.color.forEach(color=>{
+      const obj = getSelectedResult.value;
+      obj.size.forEach(size => {
+        obj.color.forEach(color => {
           productObj.value.list.push({
                 itemIsActive: true,
                 itemColor: color.color,
@@ -632,7 +647,7 @@ export default {
                 itemPrice: '',
                 itemNo: '',
                 itemBrandNo: '',
-                itemInStock:false
+                itemInStock: false
               }
           )
         })
