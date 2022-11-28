@@ -159,11 +159,13 @@
                     <div>
                       <b-table
                           class="text-center text-nowrap"
-                          :items="productObj.list"
+                          :items="computedList"
                           :fields="mainTableObj.fields"
                           sort-icon-rigth
                           sticky-header="1000px"
                           responsive
+                          fixed
+                          :variant="computedList.variant?computedList.variant:'none'"
                       >
                         <template #cell(itemIsActive)="data">
                           <toggle-button :value="data.item.itemIsActive" color="#12A3B8" :sync="true" :labels="true"
@@ -171,12 +173,8 @@
                                          :disabled="productObj.productIsActive===true?false:true "/>
                         </template>
                         <template #cell(itemIsDelete)="data">
-                          <b-form-checkbox v-model="data.item.itemIsDelete"
-                                           v-if="data.item.itemInStock===false">
-                          </b-form-checkbox>
-                          <b-form-checkbox v-else
-                                           disabled="disabled">
-                          </b-form-checkbox>
+                          <b-icon icon="trash-fill" v-if="data.item.itemInStock===false"
+                                  @click="rowClass(data)"></b-icon>
                         </template>
                         <template #cell(itemManufacturerNo)="data">
                           <input class="col-10" v-model="data.item.itemManufacturerNo">
@@ -213,8 +211,8 @@
               2.button-將成本售價試算數字存於前端，並且帶入試算 <br>
               3.照片 <br>
               4.條碼列印 <br>
-              5.新增規格 <br>
-              6.顏色的dropdown不要自動收起 <br>
+              5.送出時驗證次否有重複資料<br>
+              6.刪除row底變色+確認框
             </p>
           </div>
         </b-tab>
@@ -267,7 +265,7 @@
                           </ul>
 
                           <b-card size="sm" variant="outline-secondary" block menu-class="w-100"
-                                 >
+                          >
                             <template #button-content>
                               <b-icon icon="tag-fill"></b-icon>
                               Choose tags
@@ -354,10 +352,11 @@
       <b-table
           class="text-nowrap"
           sticky-header
-          :items="productObj.list"
+          :items="computedList"
           :fields="brandTableObj.fields"
           sort-icon-left
           responsive="sm"
+          fixed
       >
         <template #cell(itemIsActive)="data">
           <b> {{ data.item.itemIsActive ? '上架' : '下架' }}</b>
@@ -468,26 +467,26 @@ export default {
     let colorArray = reactive([]);
     const mainTableObj = reactive({
       'fields': [
-        {label: '照片', key: 'pic', sortable: true},
+        {label: '照片', key: 'pic', sortable: false},
         {label: '顏色', key: 'itemColor', sortable: true},
         {label: '尺寸', key: 'itemSize', sortable: true,},
-        {label: '廠商編號', key: 'itemManufacturerNo', sortable: true},
+        {label: '廠商編號', key: 'itemManufacturerNo', sortable: false},
         {label: '成本', key: 'itemCost', sortable: true},
         {label: '售價', key: 'itemPrice', sortable: true},
         {label: '內部編號', key: 'itemNo', sortable: true},
         {label: '條碼編號', key: 'itemBrandNo', sortable: true},
         {label: '狀態', key: 'itemIsActive', sortable: true},
-        {label: '刪除', key: 'itemIsDelete', sortable: true}
+        {label: '刪除', key: 'itemIsDelete', sortable: false}
       ],
     })
 
     const brandTableObj = reactive({
       'fields': [
-        {label: '顏色', key: 'itemColor', sortable: true},
-        {label: '尺寸', key: 'itemSize', sortable: true},
-        {label: '成本', key: 'itemCost', sortable: true},
-        {label: '售價', key: 'itemPrice', sortable: true},
-        {label: '內部編號', key: 'itemNo', sortable: true},
+        {label: '顏色', key: 'itemColor', sortable: false},
+        {label: '尺寸', key: 'itemSize', sortable: false},
+        {label: '成本', key: 'itemCost', sortable: false},
+        {label: '售價', key: 'itemPrice', sortable: false},
+        {label: '內部編號', key: 'itemNo', sortable: false},
         {label: '條碼編號', key: 'itemBrandNo', sortable: false},
         {label: '列印張數 (max:50)', key: 'printNum', sortable: false}
       ],
@@ -495,10 +494,19 @@ export default {
       'sortDesc': false
 
     })
-
-    const rowClass = function (item, type) {
-      if (!item || type !== 'row') return
-      if (item.itemIsDelete === true) return 'table-secondary'
+    const computedList = computed(() => {
+      return productObj.value.list.filter(f => f.itemIsDelete !== true);
+    })
+    const rowClass = function (data) {
+      console.log(data)
+      productObj.value.list.forEach((f,idx) => {
+        if( f.itemColor === data.item.itemColor &&
+        f.itemSize === data.item.itemSize &&
+        f.itemCost === data.item.itemCost &&
+        f.itemPrice === data.item.itemPrice){
+          productObj.value.list[idx].itemIsDelete = true;
+        }
+      })
     }
 
     //新增品項modal--start
@@ -508,7 +516,7 @@ export default {
       cleanAllButton()
     }
     const cleanAllButton = function () {
-      search.value='';
+      search.value = '';
       options.name = '';
       options.ref = '';
       options.color = [];
@@ -637,19 +645,19 @@ export default {
       obj.size.forEach(size => {
         obj.color.forEach(color => {
           productObj.value.list.push({
-                itemIsActive: true,
-                itemColor: color.color,
-                itemColorCategory: 'color.ref',
-                itemSize: size.size,
-                itemSizeNo: size.id,
-                itemManufacturerNo: productObj.value.productManufacturerNo,
-                itemCost: '',
-                itemPrice: '',
-                itemNo: '',
-                itemBrandNo: '',
-                itemInStock: false
-              }
-          )
+            itemIsActive: true,
+            itemColor: color.color,
+            itemColorCategory: 'color.ref',
+            itemSize: size.size,
+            itemSizeNo: size.id,
+            itemManufacturerNo: productObj.value.productManufacturerNo,
+            itemCost: '',
+            itemPrice: '',
+            itemNo: '',
+            itemBrandNo: '',
+            itemInStock: false,
+            itemIsDelete: false
+          })
         })
       })
       this.$refs['newItem-modal'].hide()
@@ -686,7 +694,7 @@ export default {
       colorButtonGroupObj, colorButton, buttonVariant,
       colorArray, onOptionClick,
       options, search, selectedValue, availableOptions,
-      addNewTag, getSelectedResult
+      addNewTag, getSelectedResult, computedList
     }
   }
   ,
