@@ -165,7 +165,6 @@
                           sticky-header="1000px"
                           responsive
                           fixed
-                          :variant="computedList.variant?computedList.variant:'none'"
                       >
                         <template #cell(itemIsActive)="data">
                           <toggle-button :value="data.item.itemIsActive" color="#12A3B8" :sync="true" :labels="true"
@@ -207,12 +206,11 @@
           </div>
           <div class="mt-3">
             <p class="text-justify">
-              1. 表頭固定(2張table) <br>
-              2.button-將成本售價試算數字存於前端，並且帶入試算 <br>
-              3.照片 <br>
-              4.條碼列印 <br>
-              5.送出時驗證次否有重複資料<br>
-              6.刪除row底變色+確認框
+              1.button-將成本售價試算數字存於前端，並且帶入試算 <br>
+              2.照片 <br>
+              3.條碼列印 <br>
+              4.送出時驗證次否有重複資料<br>
+              5.刪除row底變色+確認框
             </p>
           </div>
         </b-tab>
@@ -490,9 +488,6 @@ export default {
         {label: '條碼編號', key: 'itemBrandNo', sortable: false},
         {label: '列印張數 (max:50)', key: 'printNum', sortable: false}
       ],
-      'sortBy': 'age',
-      'sortDesc': false
-
     })
     const computedList = computed(() => {
       return productObj.value.list.filter(f => f.itemIsDelete !== true);
@@ -508,7 +503,6 @@ export default {
         }
       })
     }
-
     //新增品項modal--start
     //＠click新增規格按鈕
     const newItem = function () {
