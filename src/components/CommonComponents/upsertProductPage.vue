@@ -165,6 +165,7 @@
                           sticky-header="1000px"
                           responsive
                           fixed
+                          id="mainTable"
                       >
                         <template #cell(itemIsActive)="data">
                           <toggle-button :value="data.item.itemIsActive" color="#12A3B8" :sync="true" :labels="true"
@@ -173,7 +174,7 @@
                         </template>
                         <template #cell(itemIsDelete)="data">
                           <b-icon icon="trash-fill" v-if="data.item.itemInStock===false"
-                                  @click="rowClass(data)"></b-icon>
+                                  @click="rowIconClick(data)"></b-icon>
                         </template>
                         <template #cell(itemManufacturerNo)="data">
                           <input class="col-10" v-model="data.item.itemManufacturerNo">
@@ -210,7 +211,6 @@
               2.照片 <br>
               3.條碼列印 <br>
               4.送出時驗證次否有重複資料<br>
-              5.刪除row底變色+確認框
             </p>
           </div>
         </b-tab>
@@ -336,6 +336,18 @@
         </div>
       </div>
     </b-modal>
+    <b-modal ref="rowDelModal"
+             @ok="rowClass(true)"
+             ok-title="確認刪除"
+             ok-variant="danger"
+             @cancel="rowClass(false)"
+             cancel-title="取消選取"
+             cancel-variant="outline-secondary"
+    >
+      <div class="d-block text-center">
+        <h3>確定刪除資料？</h3>
+      </div>
+    </b-modal>
     <b-modal id="submit-modal" ref="submit-modal" hide-footer title="資料儲存成功！">
       <h5>{{ productObj.productId }} - {{ productObj.productName }}</h5>
       <div class="float-right">
@@ -412,7 +424,7 @@ export default {
           itemManufacturerNo: '1253',
           itemCost: '200',
           itemPrice: 500,
-          itemNo: '123456789',
+          itemNo: '123456789-1',
           itemBrandNo: '123456789',
           itemInStock: false
         }, {
@@ -424,9 +436,9 @@ export default {
           itemManufacturerNo: '1253',
           itemCost: '200',
           itemPrice: 500,
-          itemNo: '123456789',
+          itemNo: '123456789-2',
           itemBrandNo: '123456789',
-          itemInStock: true
+          itemInStock: true,
         }]
       }
       dataObj.list.forEach(f => {
@@ -492,14 +504,20 @@ export default {
     const computedList = computed(() => {
       return productObj.value.list.filter(f => f.itemIsDelete !== true);
     })
-    const rowClass = function (data) {
-      console.log(data)
-      productObj.value.list.forEach((f,idx) => {
-        if( f.itemColor === data.item.itemColor &&
-        f.itemSize === data.item.itemSize &&
-        f.itemCost === data.item.itemCost &&
-        f.itemPrice === data.item.itemPrice){
-          productObj.value.list[idx].itemIsDelete = true;
+    const rowClickData = ref();
+    const rowIconClick = function (data) {
+      rowClickData.value = data;
+      document.getElementById("mainTable").getElementsByTagName("tr")[data.index + 1].style.background = "#DDDDDD"
+      this.$refs['rowDelModal'].show();
+    }
+    const rowClass = function (isDel) {
+      document.getElementById("mainTable").getElementsByTagName("tr")[rowClickData.value.index + 1].style.background = ""
+      productObj.value.list.forEach((f, idx) => {
+        const checkListNo = f.itemNo === '' ? f.newItemNo : f.itemNo;
+        const checkClickNo = rowClickData.value.item.itemNo === '' ? rowClickData.value.item.newItemNo : rowClickData.value.item.itemNo;
+        if (checkListNo === checkClickNo) {
+          isDel ? productObj.value.list[idx].itemIsDelete = true : '';
+          return;
         }
       })
     }
@@ -650,7 +668,8 @@ export default {
             itemNo: '',
             itemBrandNo: '',
             itemInStock: false,
-            itemIsDelete: false
+            itemIsDelete: false,
+            newItemNo: productObj.value.list.length + 1
           })
         })
       })
@@ -683,7 +702,7 @@ export default {
       brandTableObj,
       newItem,
       submit,
-      productObj, mainTableObj, rowClass, isPromo,
+      productObj, mainTableObj, rowClass, rowIconClick, isPromo,
       sizeArray, sizeButton,
       colorButtonGroupObj, colorButton, buttonVariant,
       colorArray, onOptionClick,
