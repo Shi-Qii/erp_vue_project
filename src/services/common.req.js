@@ -10,7 +10,6 @@ const request = {
     'data': null,
     'domain': domainName
 }
-
 class CommonService {
 
     /**
@@ -30,7 +29,9 @@ class CommonService {
 
     Get(API_URL, requestData) {
         request.data = requestData;
-        return axios.post(API_URL, request);
+        return axios.get(API_URL,{
+            headers: { 'Content-Type': 'application/json'}
+        });
         //到時候要放權限的物件
         // return axios.post(API_URL, request, {headers: authHeader()});
     }

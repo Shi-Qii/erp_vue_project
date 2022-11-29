@@ -206,6 +206,11 @@
             </b-col>
           </div>
           <div class="mt-3">
+            <div>
+              <h1>HI VUEX </h1>
+              <h2>{{ count }}</h2>
+              <button @click="add()">增加按鈕</button>
+            </div>
             <p class="text-justify">
               1.button-將成本售價試算數字存於前端，並且帶入試算 <br>
               2.照片 <br>
@@ -385,9 +390,10 @@
 </template>
 
 <script>
-import {reactive, ref, onBeforeMount, onMounted, computed} from "@vue/composition-api/dist/vue-composition-api";
+import {computed, onBeforeMount, onMounted, reactive, ref} from "@vue/composition-api/dist/vue-composition-api";
 import VueBarcode from 'vue-barcode';
 import Uploader from "vux-uploader-component";
+import $UseAxios from '@/services/common.req';
 
 export default {
   name: "upsertProductPage",
@@ -398,8 +404,9 @@ export default {
   setup() {
     onMounted(() => {
       //統一命名$UseAxios
-      // this.$UseAxios.Post('',{})
-
+     $UseAxios.Get('https://hishowme.azurewebsites.net/showme/hello' ).then((res) => {
+        console.log('res:', res.data);
+      });
     })
     onBeforeMount(() => {
 
@@ -691,9 +698,19 @@ export default {
         alert("error - 上傳失敗！")
       }
     }
+    //測試中
+    const add = () => {
+      // 指派 vuex 要做什麼事情
+      // $storeT.dispatch('add', 1);
 
-
+    }
+    //測試中
+    const count = computed(() => {
+      // 用這樣的方式取到 vuex 中的資料。
+      // return this.$store.state.count;
+    })
     return {
+      add, count,
       fileList,
       stickyHeader,
       checked,
