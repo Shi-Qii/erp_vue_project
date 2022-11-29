@@ -173,19 +173,34 @@
     </div>
     <b-modal ref="newItem-modal" size="xl" hide-footer scrollable title="新增規格">
       <div class="row justify-content-md-center">
-        <div class="col-2">
+        <div class="col-3">
           <h5 class="ml-4">尺寸</h5>
-          <div class="mr-5 ml-2 mt-3">
+          <div class="mr-5 ml-2 mt-2">
             <b-button v-for="(btn, idx) in sizeArray" :key="idx" class="item mt-2 ml-2" :variant="btn.variant"
-                      @click="sizeButton(btn)" block>
+                      @click="sizeButton(btn)">
               {{ btn.size }}
             </b-button>
+          </div>
+          <h5 class="ml-4 mt-4">金額</h5>
+          <div class="mr-5 ml-2 mt-2">
+            <b-input-group prepend="成本" class="mb-2 mr-sm-2 mb-sm-0">
+              <b-form-input id="inline-form-input-username" placeholder="NT$..?"
+                            v-model="modelMoney.itemCost"></b-form-input>
+            </b-input-group>
+            <b-input-group prepend="售價" class="mb-2 mr-sm-2 mb-sm-0 mt-2">
+              <b-form-input id="inline-form-input-username" placeholder="NT$..?" v-model="modelMoney.itemPrice">
+              </b-form-input>
+            </b-input-group>
+            <div style="font-size:14px;color:gray">
+              利潤：{{ modelMoney.itemCount }} &nbsp;&nbsp;
+              建議售價：{{ Math.ceil(modelMoney.itemCost / (1 - modelMoney.itemCount)) }}
+            </div>
           </div>
         </div>
         <div class="col-5">
           <div>
             <h5>顏色</h5>
-            <div class="row mt-3">
+            <div class="row mt-2">
               <div>
                 <b-button-group vertical>
                   <b-button v-for="(btn, idx) in colorButtonGroupObj" :key="idx" class="item "
@@ -225,13 +240,16 @@
                                 Choose tags
                               </template>
                               <b-form-group
-                                  label="Search/add tags"
+                                  label="Search/add"
                                   label-for="tag-search-input"
                                   label-cols-md="auto"
                                   class="mb-0"
                                   label-size="sm"
                                   :disabled="disabled"
                               >
+                                <b-button class="float-right" size="sm" variant="outline-info" @click="addNewTag()"
+                                          v-if="search.trim().length>0">add
+                                </b-button>
                                 <b-form-input
                                     v-model="search"
                                     id="tag-search-input"
@@ -239,7 +257,9 @@
                                     size="sm"
                                     autocomplete="off"
                                     class="mb-3"
+                                    style="width:60%"
                                 ></b-form-input>
+
                               </b-form-group>
                               <b-button
                                   v-for="option in availableOptions"
@@ -254,9 +274,6 @@
                               </b-button>
                               <b-text v-if="availableOptions.length=== 0  ">
                                 no tag
-                                <b-button class="float-right" size="sm" variant="outline-info" @click="addNewTag()"
-                                          v-if="search.trim().length>0">add
-                                </b-button>
                               </b-text>
                             </b-card>
                           </template>
@@ -269,7 +286,7 @@
             </div>
           </div>
         </div>
-        <div class="col-4" :style="{'border-radius':'12px','background-color':'#F5F5F5'}">
+        <div class="col-3" :style="{'border-radius':'12px','background-color':'#F5F5F5'}">
           <div class="mt-4 mb-4">
             <h5>選取結果</h5>
             <div style="text-align:center" class="mt-4">
@@ -407,7 +424,7 @@ export default {
       productObj.value = dataObj
       isPromo.value = dataObj.promoInfo.promoId === '' ? false : true;
       // sizeList
-      let size = ['F', '2XS', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL'];
+      let size = ['F', '2XS', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL'];
       let sizeArr = []
       size.forEach((f, idx) => {
         sizeArr.push({size: f, state: false, variant: 'outline-secondary', id: idx})
@@ -416,12 +433,12 @@ export default {
       // colorList
       let ColorArr = reactive(     //所選清單-各分類目前所選取的顏色清單
           {
-            'blackWhiteAndGray': {color: ['黑色', '白色', '灰色']},
-            'lightColor': {color: ['杏色', '奶茶']},
-            'yellowAndBrown': {color: ['黃色', '橘紅', '卡其']},
-            'redAndPink': {color: ['紅色', '粉紅']},
-            'purpleAndBlue': {color: ['紫色', '藍色']},
-            'green': {color: ['綠色']},
+            'blackWhiteAndGray': {color: ['黑色', '白色', '灰色', '鐵灰', '淺灰']},
+            'lightColor': {color: ['米白', '杏色', '奶茶']},
+            'yellowAndBrown': {color: ['黃色', '鵝黃', '橘紅', '卡其', '可可', '咖啡']},
+            'redAndPink': {color: ['粉色', '紅色', '磚紅']},
+            'purpleAndBlue': {color: ['紫色', '藍色', '深藍', '淺藍']},
+            'green': {color: ['綠色', '草綠', '軍綠']},
             'otherColor': {color: []},
           }
       )
@@ -502,6 +519,12 @@ export default {
         f.variant = 'outline-secondary'
       })
     }
+    //金額 itemCost/(1-itemCount)=itemPrice
+    const modelMoney = reactive({
+      itemCost: '',
+      itemPrice: '',
+      itemCount: '0.33'
+    })
     //size
     const sizeButton = function (btn) {
       btn.state = btn.state === true ? false : true;
@@ -583,7 +606,8 @@ export default {
       this.search = ''
     }
     const addNewTag = function () {
-      let isExit = options.color.some((f) => f === search.value);
+      // let isExit = options.color.some((f) => f === search.value);
+      let isExit = colorArray[options.ref].color.some((f) => f === search.value);
       if (!isExit) {
         colorArray[options.ref].color.push(search.value);
       }
@@ -612,77 +636,81 @@ export default {
       return result;
     })
     const addRow = function () {
-      const obj = getSelectedResult.value;
-      obj.size.forEach(size => {
-        obj.color.forEach(color => {
-          productObj.value.list.push({
-            itemIsActive: true,
-            itemColor: color.color,
-            itemColorCategory: 'color.ref',
-            itemSize: size.size,
-            itemSizeNo: size.id,
-            itemManufacturerNo: productObj.value.productManufacturerNo,
-            itemCost: '',
-            itemPrice: '',
-            itemNo: '',
-            itemBrandNo: '',
-            itemInStock: false,
-            itemIsDelete: false,
-            newItemNo: productObj.value.list.length + 1
+      if (parseInt(modelMoney.itemCost.trim()) >= 0 && parseInt(modelMoney.itemPrice.trim()) >= 0) {
+        const obj = getSelectedResult.value;
+        obj.size.forEach(size => {
+          obj.color.forEach(color => {
+            productObj.value.list.push({
+              itemIsActive: true,
+              itemColor: color.color,
+              itemColorCategory: 'color.ref',
+              itemSize: size.size,
+              itemSizeNo: size.id,
+              itemManufacturerNo: productObj.value.productManufacturerNo,
+              itemCost: modelMoney.itemCost.trim(),
+              itemPrice: modelMoney.itemPrice.trim(),
+              itemNo: '',
+              itemBrandNo: '',
+              itemInStock: false,
+              itemIsDelete: false,
+              newItemNo: productObj.value.list.length + 1
+            })
           })
         })
-      })
-      this.$refs['newItem-modal'].hide()
-    }
-    //新增品項modal--end
-
-
-    const barcodeValue = ref('CODE39 Barcode');
-    const fileList = ref([]);
-
-
-    const submit = function () {
-      //打api儲存更新資料，並把確認的資料往再往前端送
-      let flag = true;
-      if (flag) {
-        this.$refs['submit-modal'].show()
+        this.$refs['newItem-modal'].hide()
       } else {
-        alert("error - 上傳失敗！")
+        alert("金額未填或格式錯誤");
       }
     }
-    //測試中
-    const add = () => {
-      // 指派 vuex 要做什麼事情
-      // $storeT.dispatch('add', 1);
-
-    }
-    //測試中
-    const count = computed(() => {
-      // 用這樣的方式取到 vuex 中的資料。
-      // return this.$store.state.count;
-    })
-    return {
-      add, count,
-      fileList,
-      stickyHeader,
-      checked,
-      addRow,
-      barcodeValue,
-      brandTableObj,
-      newItem,
-      submit,
-      productObj, mainTableObj, rowClass, rowIconClick, isPromo,
-      sizeArray, sizeButton,
-      colorButtonGroupObj, colorButton, buttonVariant,
-      colorArray, onOptionClick,
-      options, search, selectedValue, availableOptions,
-      addNewTag, getSelectedResult, computedList
-    }
-  }
-  ,
+          //新增品項modal--end
 
 
-}
+          const barcodeValue = ref('CODE39 Barcode');
+          const fileList = ref([]);
+
+
+          const submit = function () {
+            //打api儲存更新資料，並把確認的資料往再往前端送
+            let flag = true;
+            if (flag) {
+              this.$refs['submit-modal'].show()
+            } else {
+              alert("error - 上傳失敗！")
+            }
+          }
+          //測試中
+          const add = () => {
+            // 指派 vuex 要做什麼事情
+            // $storeT.dispatch('add', 1);
+
+          }
+          //測試中
+          const count = computed(() => {
+            // 用這樣的方式取到 vuex 中的資料。
+            // return this.$store.state.count;
+          })
+          return {
+            add, count,
+            fileList,
+            stickyHeader,
+            checked,
+            addRow,
+            barcodeValue,
+            brandTableObj,
+            newItem,
+            submit,
+            productObj, mainTableObj, rowClass, rowIconClick, isPromo,
+            sizeArray, sizeButton,
+            colorButtonGroupObj, colorButton, buttonVariant,
+            colorArray, onOptionClick,
+            options, search, selectedValue, availableOptions,
+            addNewTag, getSelectedResult, computedList, modelMoney
+          }
+        }
+        ,
+
+
+        }
 </script>
 
 <style scoped>
