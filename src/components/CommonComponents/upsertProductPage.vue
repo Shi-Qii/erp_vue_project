@@ -91,7 +91,7 @@
             <div class="col-12">
               <div class="form-group">
                 <label>項目列表</label>
-                  <b-button variant="outline-secondary" class="mr-5 float-right" @click="newItem()">新增規格</b-button>
+                <b-button variant="outline-secondary" class="mr-5 float-right" @click="newItem()">新增規格</b-button>
               </div>
             </div>
           </div>
@@ -183,86 +183,88 @@
           </div>
         </div>
         <div class="col-5">
-          <h5>顏色</h5>
-          <div class="row mt-3">
-            <div>
-              <b-button-group vertical>
-                <b-button v-for="(btn, idx) in colorButtonGroupObj" :key="idx" class="item "
-                          :variant="buttonVariant(btn)" @click="colorButton(btn)">
-                  {{ btn.name }} (
-                  {{ options.name === btn.name ? options.color.length : selectedValue[btn.ref].color.length }} )
-                </b-button>
-              </b-button-group>
-            </div>
-            <div class="col-8 item"
-                 :style="{'padding':'5px','width':'100%'}"
-            >
-              <div class="ml-3">
-                {{ options.name }}
-                <template>
-                  <div class="mt-2">
-                    <b-form-group label-for="tags-withﬁ-dropdown" v-if="options.ref!==''">
-                      <b-form-tags id="tags-with-dropdown" v-model="options.color"
-                                   no-outer-focus class="mb-2">
-                        <template v-slot="{ tags, disabled, addTag, removeTag }">
-                          <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
-                            <li v-for="tag in tags" :key="tag" class="list-inline-item">
-                              <b-form-tag
-                                  @remove="removeTag(tag)"
-                                  :title="tag"
-                                  :disabled="disabled"
-                                  variant="info"
-                              >{{ tag }}
-                              </b-form-tag>
-                            </li>
-                          </ul>
+          <div>
+            <h5>顏色</h5>
+            <div class="row mt-3">
+              <div>
+                <b-button-group vertical>
+                  <b-button v-for="(btn, idx) in colorButtonGroupObj" :key="idx" class="item "
+                            :variant="buttonVariant(btn)" @click="colorButton(btn)">
+                    {{ btn.name }} (
+                    {{ options.name === btn.name ? options.color.length : selectedValue[btn.ref].color.length }} )
+                  </b-button>
+                </b-button-group>
+              </div>
+              <div class="col-8 item"
+                   :style="{'padding':'5px','width':'100%'}"
+              >
+                <div class="ml-3">
+                  {{ options.name }}
+                  <template>
+                    <div class="mt-2">
+                      <b-form-group label-for="tags-withﬁ-dropdown" v-if="options.ref!==''">
+                        <b-form-tags id="tags-with-dropdown" v-model="options.color"
+                                     no-outer-focus class="mb-2">
+                          <template v-slot="{ tags, disabled, addTag, removeTag }">
+                            <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
+                              <li v-for="tag in tags" :key="tag" class="list-inline-item">
+                                <b-form-tag
+                                    @remove="removeTag(tag)"
+                                    :title="tag"
+                                    :disabled="disabled"
+                                    variant="info"
+                                >{{ tag }}
+                                </b-form-tag>
+                              </li>
+                            </ul>
 
-                          <b-card size="sm" variant="outline-secondary" block menu-class="w-100"
-                          >
-                            <template #button-content>
-                              <b-icon icon="tag-fill"></b-icon>
-                              Choose tags
-                            </template>
-                            <b-form-group
-                                label="Search/add tags"
-                                label-for="tag-search-input"
-                                label-cols-md="auto"
-                                class="mb-0"
-                                label-size="sm"
-                                :disabled="disabled"
+                            <b-card size="sm" variant="outline-secondary" block menu-class="w-100"
                             >
-                              <b-form-input
-                                  v-model="search"
-                                  id="tag-search-input"
-                                  type="search"
+                              <template #button-content>
+                                <b-icon icon="tag-fill"></b-icon>
+                                Choose tags
+                              </template>
+                              <b-form-group
+                                  label="Search/add tags"
+                                  label-for="tag-search-input"
+                                  label-cols-md="auto"
+                                  class="mb-0"
+                                  label-size="sm"
+                                  :disabled="disabled"
+                              >
+                                <b-form-input
+                                    v-model="search"
+                                    id="tag-search-input"
+                                    type="search"
+                                    size="sm"
+                                    autocomplete="off"
+                                    class="mb-3"
+                                ></b-form-input>
+                              </b-form-group>
+                              <b-button
+                                  v-for="option in availableOptions"
+                                  :key="option"
+                                  @click="onOptionClick({option , addTag },true)"
                                   size="sm"
-                                  autocomplete="off"
-                                  class="mb-3"
-                              ></b-form-input>
-                            </b-form-group>
-                            <b-button
-                                v-for="option in availableOptions"
-                                :key="option"
-                                @click="onOptionClick({option , addTag },true)"
-                                size="sm"
-                                variant="outline-secondary"
-                                class="mr-1 mb-1 float-left"
-                            >{{ option }}
-                              <b-icon icon="x" @click="onOptionClick({option , addTag },false)"
-                                      class="float-right"></b-icon>
-                            </b-button>
-                            <b-text v-if="availableOptions.length=== 0  ">
-                              no tag
-                              <b-button class="float-right" size="sm" variant="outline-info" @click="addNewTag()"
-                                        v-if="search.trim().length>0">add
+                                  variant="outline-secondary"
+                                  class="mr-1 mb-1 float-left"
+                              >{{ option }}
+                                <b-icon icon="x" @click="onOptionClick({option , addTag },false)"
+                                        class="float-right"></b-icon>
                               </b-button>
-                            </b-text>
-                          </b-card>
-                        </template>
-                      </b-form-tags>
-                    </b-form-group>
-                  </div>
-                </template>
+                              <b-text v-if="availableOptions.length=== 0  ">
+                                no tag
+                                <b-button class="float-right" size="sm" variant="outline-info" @click="addNewTag()"
+                                          v-if="search.trim().length>0">add
+                                </b-button>
+                              </b-text>
+                            </b-card>
+                          </template>
+                        </b-form-tags>
+                      </b-form-group>
+                    </div>
+                  </template>
+                </div>
               </div>
             </div>
           </div>
@@ -363,7 +365,7 @@ export default {
       let dataObj = {
         upsertType: "U",
         productName: "上衣",
-        productId: "0123456789",
+        productId: "2200001",
         productManufacturerNo: "0123456789",
         productManufacturerName: "衣蕾",
         productIsActive: true,
@@ -381,7 +383,7 @@ export default {
           itemManufacturerNo: '1253',
           itemCost: '200',
           itemPrice: 500,
-          itemNo: '123456789-1',
+          itemNo: '2200001-01',
           itemBrandNo: '123456789',
           itemInStock: false
         }, {
@@ -393,7 +395,7 @@ export default {
           itemManufacturerNo: '1253',
           itemCost: '200',
           itemPrice: 500,
-          itemNo: '123456789-2',
+          itemNo: '2200001-02',
           itemBrandNo: '123456789',
           itemInStock: true,
         }]
