@@ -74,9 +74,6 @@
                 <text style="color:lightskyblue"></text>
                 <div class="col-md-5 offset-md-1">
 
-                  <uploader
-                      v-model="fileList"
-                  ></uploader>
                 </div>
               </b-col>
             </div>
@@ -124,15 +121,15 @@
                               @click="rowIconClick(data)"></b-icon>
                     </template>
                     <template #cell(itemManufacturerNo)="data">
-                      <input class="col-10" v-model="data.item.itemManufacturerNo">
+                      <b-form-input v-model="data.item.itemManufacturerNo"></b-form-input>
                     </template>
                     <template #cell(itemCost)="data">
-                      <input class="col-10" v-model="data.item.itemCost"
-                             :disabled="data.item.itemNo===''?false:true ">
+                      <b-form-input v-model="data.item.itemCost"
+                                    :disabled="data.item.itemNo===''?false:true "></b-form-input>
                     </template>
                     <template #cell(itemPrice)="data">
-                      <input class="col-10" v-model="data.item.itemPrice"
-                             :disabled="data.item.itemNo===''?false:true ">
+                      <b-form-input v-model="data.item.itemPrice"
+                                    :disabled="data.item.itemNo===''?false:true "></b-form-input>
                     </template>
                   </b-table>
                 </div>
@@ -159,10 +156,9 @@
           <button @click="add()">增加按鈕</button>
         </div>
         <p class="text-justify">
-          1.button-將成本售價試算數字存於前端，並且帶入試算 <br>
-          2.照片 <br>
-          3.條碼列印 <br>
-          4.送出時驗證次否有重複資料<br>
+          1.照片 <br>
+          2.條碼列印 <br>
+          3.送出時驗證次否有重複資料(vee)<br>
         </p>
         <div>
 
@@ -188,15 +184,24 @@
           <div class="mr-5 ml-2 mt-2">
             <b-input-group prepend="成本" class="mb-2 mr-sm-2 mb-sm-0">
               <b-form-input id="inline-form-input-username" placeholder="NT$..?"
-                            v-model="modelMoney.itemCost"></b-form-input>
+                            v-model="modelMoney.itemCost" autocomplete="off"></b-form-input>
             </b-input-group>
             <b-input-group prepend="售價" class="mb-2 mr-sm-2 mb-sm-0 mt-2">
-              <b-form-input id="inline-form-input-username" placeholder="NT$..?" v-model="modelMoney.itemPrice">
+              <b-form-input id="inline-form-input-username" placeholder="NT$..?" v-model="modelMoney.itemPrice"
+                            autocomplete="off">
               </b-form-input>
             </b-input-group>
             <div style="font-size:14px;color:gray">
-              利潤：{{ modelMoney.itemCount }} &nbsp;&nbsp;
-              建議售價：{{ Math.ceil(modelMoney.itemCost / (1 - modelMoney.itemCount)) }}
+              利潤：{{ modelMoney.itemCount }} &nbsp;
+              <b-icon icon="gear-fill" font-scale="1" @click="modifyCount()"></b-icon>
+              <br>
+              建議售價：NT$ {{
+                Math.ceil(modelMoney.itemCost / (1 - modelMoney.itemCount)).toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'TWD',
+                  minimumFractionDigits: 0
+                })
+              }}
             </div>
           </div>
         </div>
@@ -345,9 +350,6 @@
           responsive="sm"
           fixed
       >
-        <template #cell(itemIsActive)="data">
-          <b> {{ data.item.itemIsActive ? '上架' : '下架' }}</b>
-        </template>
         <template #cell(printNum)="data">
           <b-input
               trim
@@ -356,25 +358,19 @@
           ></b-input>
         </template>
       </b-table>
-      <!--      <b-button class="mt-2" variant="outline-info" block>列印</b-button>-->
-
-      <PrintViewFunction :ObjectItem='ObjectItem'/>
-
+      <b-button class="mt-2" variant="outline-info" block>列印</b-button>
+      <!--      <PrintViewFunction :ObjectItem='ObjectItem'/>-->
     </b-modal>
   </div>
 </template>
 
 <script>
 import {computed, onBeforeMount, onMounted, reactive, ref} from "@vue/composition-api/dist/vue-composition-api";
-import Uploader from "vux-uploader-component";
 import $UseAxios from '@/services/common.req';
-import PrintViewFunction from "@/components/CommonComponents/PrintViewFunction";
 
 export default {
   name: "upsertProductPage",
-  components: {
-    Uploader, PrintViewFunction
-  },
+  components: {},
   setup() {
     onMounted(() => {
       //統一命名$UseAxios
@@ -388,7 +384,7 @@ export default {
         upsertType: "U",
         productName: "上衣",
         productId: "2200001",
-        productManufacturerNo: "0123456789",
+        productManufacturerNo: "11205",
         productManufacturerName: "衣蕾",
         productIsActive: true,
         promoInfo: {
@@ -461,7 +457,7 @@ export default {
         {label: '照片', key: 'pic', sortable: false},
         {label: '顏色', key: 'itemColor', sortable: true},
         {label: '尺寸', key: 'itemSize', sortable: true,},
-        {label: '廠商編號', key: 'itemManufacturerNo', sortable: false},
+        {label: '廠商編號', key: 'itemManufacturerNo', sortable: true},
         {label: '成本', key: 'itemCost', sortable: true},
         {label: '售價', key: 'itemPrice', sortable: true},
         {label: '內部編號', key: 'itemNo', sortable: true},
@@ -479,7 +475,7 @@ export default {
         {label: '售價', key: 'itemPrice', sortable: false},
         {label: '內部編號', key: 'itemNo', sortable: false},
         {label: '條碼編號', key: 'itemBrandNo', sortable: false},
-        {label: '列印張數 (max:50)', key: 'printNum', sortable: false}
+        {label: '列印張數', key: 'printNum', sortable: false}
       ],
     })
     const computedList = computed(() => {
@@ -513,6 +509,8 @@ export default {
       options.name = '';
       options.ref = '';
       options.color = [];
+      modelMoney.itemCost = '';
+      modelMoney.itemPrice = ''
       Object.values(selectedValue).forEach(f => {
         f.color = []
       })
@@ -641,37 +639,34 @@ export default {
       return result;
     })
     const addRow = function () {
-      if (parseInt(modelMoney.itemCost.trim()) >= 0 && parseInt(modelMoney.itemPrice.trim()) >= 0) {
-        const obj = getSelectedResult.value;
-        obj.size.forEach(size => {
-          obj.color.forEach(color => {
-            productObj.value.list.push({
-              itemIsActive: true,
-              itemColor: color.color,
-              itemColorCategory: 'color.ref',
-              itemSize: size.size,
-              itemSizeNo: size.id,
-              itemManufacturerNo: productObj.value.productManufacturerNo,
-              itemCost: modelMoney.itemCost.trim(),
-              itemPrice: modelMoney.itemPrice.trim(),
-              itemNo: '',
-              itemBrandNo: '',
-              itemInStock: false,
-              itemIsDelete: false,
-              newItemNo: productObj.value.list.length + 1
-            })
+      const obj = getSelectedResult.value;
+      obj.size.forEach(size => {
+        obj.color.forEach(color => {
+          productObj.value.list.push({
+            itemIsActive: true,
+            itemColor: color.color,
+            itemColorCategory: 'color.ref',
+            itemSize: size.size,
+            itemSizeNo: size.id,
+            itemManufacturerNo: productObj.value.productManufacturerNo,
+            itemCost: modelMoney.itemCost.trim(),
+            itemPrice: modelMoney.itemPrice.trim(),
+            itemNo: '',
+            itemBrandNo: '',
+            itemInStock: false,
+            itemIsDelete: false,
+            newItemNo: productObj.value.list.length + 1
           })
         })
-        this.$refs['newItem-modal'].hide()
-      } else {
-        alert("金額未填或格式錯誤");
-      }
+      })
+      this.$refs['newItem-modal'].hide()
     }
     //新增品項modal--end
 
-
+    const modifyCount = function () {
+      alert("修改利潤");
+    }
     const fileList = ref([]);
-
 
     const submit = function () {
       //打api儲存更新資料，並把確認的資料往再往前端送
@@ -695,7 +690,7 @@ export default {
     })
 
     const ObjectItem = ref(computedList)
-    const myCroppa =  ref()
+    const myCroppa = ref()
     const imgUrl = ref('')
     const generateImage = function () {
       let url = myCroppa.value.generateDataUrl()
@@ -706,7 +701,7 @@ export default {
       imgUrl.value = url
     }
     return {
-      myCroppa,imgUrl,generateImage,
+      myCroppa, imgUrl, generateImage,
       add, count, ObjectItem,
       fileList,
       stickyHeader,
@@ -720,12 +715,9 @@ export default {
       colorButtonGroupObj, colorButton, buttonVariant,
       colorArray, onOptionClick,
       options, search, selectedValue, availableOptions,
-      addNewTag, getSelectedResult, computedList, modelMoney
+      addNewTag, getSelectedResult, computedList, modelMoney, modifyCount
     }
-  }
-  ,
-
-
+  },
 }
 </script>
 
