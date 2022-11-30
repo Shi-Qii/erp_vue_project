@@ -164,6 +164,7 @@
           3.條碼列印 <br>
           4.送出時驗證次否有重複資料<br>
         </p>
+        <PrintViewFunction/>
         <div class="mt-3">
           <input v-model="barcodeValue"/><br>
           <barcode v-bind:value="barcodeValue" format="CODE39" width="1.5" height="35">
@@ -363,12 +364,12 @@ import {computed, onBeforeMount, onMounted, reactive, ref} from "@vue/compositio
 import VueBarcode from 'vue-barcode';
 import Uploader from "vux-uploader-component";
 import $UseAxios from '@/services/common.req';
-
+import PrintViewFunction from "@/components/CommonComponents/PrintViewFunction";
 export default {
   name: "upsertProductPage",
   components: {
     'barcode': VueBarcode,
-    Uploader
+    Uploader,PrintViewFunction
   },
   setup() {
     onMounted(() => {
