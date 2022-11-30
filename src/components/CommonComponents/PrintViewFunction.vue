@@ -2,6 +2,14 @@
   <div>
     <div class="not_print">
       <div>
+
+        <div class="mt-3 barcodeClass">
+          <div v-for="(item, idn) in tableArr" :key="idn">
+            <barcode v-bind:value="item.itemBrandNo" format="CODE39" width="1.5" height="35">
+            </barcode>
+          </div>
+
+        </div>
         <a href="javascript:void(0)"
            @click="makePrint();">
           <b-icon icon="printer"></b-icon>
@@ -14,13 +22,33 @@
 
 <script>
 
+import VueBarcode from 'vue-barcode';
+
+import {ref} from "@vue/composition-api/dist/vue-composition-api";
+
 export default {
   name: "PrintViewFunction",
-  setup() {
+  components: {
+    'barcode': VueBarcode
+  },
+  props: {
+    ObjectItem: Array
+  },
+  setup(props) {
+    let tableArr = ref(props.ObjectItem);
+
+    //itemBrandNo 要列印的對象
+    //brandNum 要列印的數量
+
     const makePrint = function () {
+      const pringObject = document.getElementsByClassName('barcodeClass')
+      let bdhtml = pringObject[0].innerHTML;
+
+      window.document.body.innerHTML = bdhtml;
       window.print();
+
     }
-    return {makePrint}
+    return {makePrint, tableArr}
   }
 }
 </script>

@@ -164,12 +164,8 @@
           3.條碼列印 <br>
           4.送出時驗證次否有重複資料<br>
         </p>
-        <PrintViewFunction/>
-        <div class="mt-3">
-          <input v-model="barcodeValue"/><br>
-          <barcode v-bind:value="barcodeValue" format="CODE39" width="1.5" height="35">
-          </barcode>
-        </div>
+
+
       </div>
     </div>
     <b-modal ref="newItem-modal" size="xl" hide-footer scrollable title="新增規格">
@@ -354,22 +350,24 @@
           ></b-input>
         </template>
       </b-table>
-      <b-button class="mt-2" variant="outline-info" block>列印</b-button>
+      <!--      <b-button class="mt-2" variant="outline-info" block>列印</b-button>-->
+
+      <PrintViewFunction :ObjectItem='ObjectItem'/>
+
     </b-modal>
   </div>
 </template>
 
 <script>
 import {computed, onBeforeMount, onMounted, reactive, ref} from "@vue/composition-api/dist/vue-composition-api";
-import VueBarcode from 'vue-barcode';
 import Uploader from "vux-uploader-component";
 import $UseAxios from '@/services/common.req';
 import PrintViewFunction from "@/components/CommonComponents/PrintViewFunction";
+
 export default {
   name: "upsertProductPage",
   components: {
-    'barcode': VueBarcode,
-    Uploader,PrintViewFunction
+    Uploader, PrintViewFunction
   },
   setup() {
     onMounted(() => {
@@ -663,55 +661,55 @@ export default {
         alert("金額未填或格式錯誤");
       }
     }
-          //新增品項modal--end
+    //新增品項modal--end
 
 
-          const barcodeValue = ref('CODE39 Barcode');
-          const fileList = ref([]);
+    const fileList = ref([]);
 
 
-          const submit = function () {
-            //打api儲存更新資料，並把確認的資料往再往前端送
-            let flag = true;
-            if (flag) {
-              this.$refs['submit-modal'].show()
-            } else {
-              alert("error - 上傳失敗！")
-            }
-          }
-          //測試中
-          const add = () => {
-            // 指派 vuex 要做什麼事情
-            // $storeT.dispatch('add', 1);
+    const submit = function () {
+      //打api儲存更新資料，並把確認的資料往再往前端送
+      let flag = true;
+      if (flag) {
+        this.$refs['submit-modal'].show()
+      } else {
+        alert("error - 上傳失敗！")
+      }
+    }
+    //測試中
+    const add = () => {
+      // 指派 vuex 要做什麼事情
+      // $storeT.dispatch('add', 1);
 
-          }
-          //測試中
-          const count = computed(() => {
-            // 用這樣的方式取到 vuex 中的資料。
-            // return this.$store.state.count;
-          })
-          return {
-            add, count,
-            fileList,
-            stickyHeader,
-            checked,
-            addRow,
-            barcodeValue,
-            brandTableObj,
-            newItem,
-            submit,
-            productObj, mainTableObj, rowClass, rowIconClick, isPromo,
-            sizeArray, sizeButton,
-            colorButtonGroupObj, colorButton, buttonVariant,
-            colorArray, onOptionClick,
-            options, search, selectedValue, availableOptions,
-            addNewTag, getSelectedResult, computedList, modelMoney
-          }
-        }
-        ,
+    }
+    //測試中
+    const count = computed(() => {
+      // 用這樣的方式取到 vuex 中的資料。
+      // return this.$store.state.count;
+    })
+
+    const ObjectItem = ref(computedList)
+    return {
+      add, count, ObjectItem,
+      fileList,
+      stickyHeader,
+      checked,
+      addRow,
+      brandTableObj,
+      newItem,
+      submit,
+      productObj, mainTableObj, rowClass, rowIconClick, isPromo,
+      sizeArray, sizeButton,
+      colorButtonGroupObj, colorButton, buttonVariant,
+      colorArray, onOptionClick,
+      options, search, selectedValue, availableOptions,
+      addNewTag, getSelectedResult, computedList, modelMoney
+    }
+  }
+  ,
 
 
-        }
+}
 </script>
 
 <style scoped>
