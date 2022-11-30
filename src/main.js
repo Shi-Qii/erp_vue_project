@@ -38,8 +38,9 @@ Vue.use(VueCroppie);
 import ToggleButton from 'vue-js-toggle-button'
 Vue.use(ToggleButton)
 
-
-
+//Croppa
+import Croppa from 'vue-croppa';
+Vue.use(Croppa, { componentName: 'my-image-cropper' });
 //------------------------專案配置end------------
 Vue.config.productionTip = false;
 new Vue({

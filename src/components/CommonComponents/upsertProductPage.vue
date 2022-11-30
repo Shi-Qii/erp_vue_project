@@ -164,7 +164,13 @@
           3.條碼列印 <br>
           4.送出時驗證次否有重複資料<br>
         </p>
+        <div>
 
+          <my-image-cropper v-model="myCroppa"></my-image-cropper>
+          <button @click="generateImage">Generate</button>
+          <br>
+          <img class="output" :src="imgUrl">
+        </div>
 
       </div>
     </div>
@@ -689,7 +695,18 @@ export default {
     })
 
     const ObjectItem = ref(computedList)
+    const myCroppa =  ref()
+    const imgUrl = ref('')
+    const generateImage = function () {
+      let url = myCroppa.value.generateDataUrl()
+      if (!url) {
+        alert('no image')
+        return
+      }
+      imgUrl.value = url
+    }
     return {
+      myCroppa,imgUrl,generateImage,
       add, count, ObjectItem,
       fileList,
       stickyHeader,
@@ -713,5 +730,8 @@ export default {
 </script>
 
 <style scoped>
-
+.croppa-container {
+  background-color: white;
+  border: 3px solid black
+}
 </style>
