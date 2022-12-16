@@ -25,7 +25,7 @@ export default {
     const routerList = reactive(
         [{
           'name': '查詢列表',
-          'toPath': 'ProjectHome1'
+          'toPath': 'ProductList'
         }, {
           'name': '新增品項頁面',
           'toPath': 'UpsertProductPage'

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div style="background-color: white" class=" col-12 mt-3 pt-3 mb-3 pb-3 justify-content-md-center">
+    <div style="background-color: white;border-radius: 10px" class=" col-12 mt-3 pt-3 mb-3 pb-3 justify-content-md-center">
       <div class="row ">
         <b-col class="col-md-6">
           <!--                info start-->
@@ -56,7 +56,7 @@
                       </b-col>
                       <b-col cols="8">[促銷中]&nbsp;&nbsp;&nbsp;{{
                           productObj.promoInfo.promoName
-                        }}-商品{{ productObj.promoInfo.promoDiscount }}折
+                        }}-{{ productObj.promoInfo.promoDiscount }}
                       </b-col>
                     </b-row>
                     <b-row v-else>
@@ -117,11 +117,6 @@
                              @click="editImageButton('B',data.item.itemNo===''?data.item.newItemNo:data.item.itemNo)">
                       </div>
                     </template>
-                    <template #cell(itemIsActive)="data">
-                      <toggle-button :value="data.item.itemIsActive" color="#12A3B8" :sync="true" :labels="true"
-                                     v-model="data.item.itemIsActive"
-                                     :disabled="productObj.productIsActive===true?false:true "/>
-                    </template>
                     <template #cell(itemIsDelete)="data">
                       <b-icon icon="trash-fill" v-if="data.item.itemInStock===false"
                               @click="rowIconClick(data)"></b-icon>
@@ -149,6 +144,7 @@
           <div style="text-align:center" class="mt-3">
             <div>
               <div>
+                <b-button variant="danger" class="ml-3"> 刪除資訊</b-button>
                 <b-button @click="submit()" variant="info" class="ml-3"> 儲存資訊</b-button>
               </div>
             </div>
@@ -405,10 +401,9 @@ export default {
         promoInfo: {
           promoId: '123456',
           promoName: '換季大拍賣',
-          promoDiscount: '95'
+          promoDiscount: '商品95折/全面100元'
         },
         list: [{
-          itemIsActive: true,
           itemColor: '黑色',
           itemColorCategory: 'blackWhiteAndGray',
           itemSize: 'F',
@@ -421,7 +416,6 @@ export default {
           itemInStock: false,
           itemPic: ''
         }, {
-          itemIsActive: true,
           itemColor: '藍色',
           itemColorCategory: 'purpleAndBlue',
           itemSize: 'F',
@@ -472,14 +466,13 @@ export default {
     const mainTableObj = reactive({
       'fields': [
         {label: '照片', key: 'itemPic', sortable: false},
-        {label: '顏色', key: 'itemColor', sortable: true, tdClass: 'align-middle'},
-        {label: '尺寸', key: 'itemSize', sortable: true, tdClass: 'align-middle'},
-        {label: '廠商編號', key: 'itemManufacturerNo', sortable: true, tdClass: 'align-middle'},
-        {label: '成本', key: 'itemCost', sortable: true, tdClass: 'align-middle'},
-        {label: '售價', key: 'itemPrice', sortable: true, tdClass: 'align-middle'},
-        {label: '內部編號', key: 'itemNo', sortable: true, tdClass: 'align-middle'},
-        {label: '條碼編號', key: 'itemBrandNo', sortable: true, tdClass: 'align-middle'},
-        {label: '狀態', key: 'itemIsActive', sortable: true, tdClass: 'align-middle'},
+        {label: '顏色', key: 'itemColor', sortable: false, tdClass: 'align-middle'},
+        {label: '尺寸', key: 'itemSize', sortable: false, tdClass: 'align-middle'},
+        {label: '廠商編號', key: 'itemManufacturerNo', sortable: false, tdClass: 'align-middle'},
+        {label: '成本', key: 'itemCost', sortable: false, tdClass: 'align-middle'},
+        {label: '售價', key: 'itemPrice', sortable: false, tdClass: 'align-middle'},
+        {label: '內部編號', key: 'itemNo', sortable: false, tdClass: 'align-middle'},
+        {label: '條碼編號', key: 'itemBrandNo', sortable: false, tdClass: 'align-middle'},
         {label: '刪除', key: 'itemIsDelete', sortable: false, tdClass: 'align-middle'}
       ],
     })
@@ -660,7 +653,6 @@ export default {
       obj.size.forEach(size => {
         obj.color.forEach(color => {
           productObj.value.list.push({
-            itemIsActive: true,
             itemColor: color.color,
             itemColorCategory: 'color.ref',
             itemSize: size.size,
