@@ -77,6 +77,7 @@
               sort-icon-rigth
               sticky-header="1000px"
               responsive
+              v-if="inStockMode==false"
           >
             <template #head(no)>
               <span>內部編號</span>
@@ -88,9 +89,34 @@
               <span>廠商名稱<br>廠商編號</span>
             </template>
           </b-table>
-
+          <b-table
+              class="text-center text-nowrap pre-wrap"
+              align-self="center"
+              :items="computedList"
+              :fields="inStockTableObj.fields"
+              sort-icon-rigth
+              sticky-header="1000px"
+              responsive
+              v-if="inStockMode==true"
+          >
+            <template #head(no)>
+              <span>內部編號</span>
+            </template>
+            <template #head(sizeAndColor)>
+              <span>商品尺寸<br>商品顏色</span>
+            </template>
+            <template #head(supplier)>
+              <span>廠商名稱<br>廠商編號</span>
+            </template>
+          </b-table>
         </b-col>
       </div>
+      <div class="row mt-2">
+        <b-col>
+          <div class="mt-3">
+            <b-pagination v-model="currentPage" :total-rows="rows" align="center"></b-pagination>
+          </div>
+        </b-col> </div>
     </div>
   </div>
 </template>
@@ -127,11 +153,25 @@ export default {
       ],
     })
 
+    const inStockTableObj = reactive({
+      'fields': [
+        {label: '商品照片', key: 'pic', sortable: false, thClass: 'align-middle'},
+        {label: '內部編號', key: 'no', sortable: false, thClass: 'align-middle'},
+        {label: '商品名稱', key: 'name', sortable: false, thClass: 'align-middle'},
+        {label: '', key: 'sizeAndColor', sortable: false},
+        {label: '', key: 'supplier', sortable: false, thClass: 'align-middle'},
+        {label: '標籤', key: 'tag', sortable: false, thClass: 'align-middle'},
+        {label: '公司', key: 'com1', sortable: false, thClass: 'align-middle'},
+        {label: '新店店', key: 'com2', sortable: false, thClass: 'align-middle'},
+        {label: '公館店', key: 'com3', sortable: false, thClass: 'align-middle'}
+      ],
+    })
+
     const inStockMode=ref(false);
 
     return {
       inStockMode,
-      mainTableObj
+      mainTableObj,inStockTableObj,
     }
   },
 }
