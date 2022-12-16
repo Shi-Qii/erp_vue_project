@@ -21,7 +21,14 @@
               下架
               <b-badge variant="light">9</b-badge>
             </b-button>
-          </span>
+          </span></b-col>
+        <b-col></b-col>
+        <b-col class="justify-center">
+          <div style="text-align:center">
+            <span>庫存模式</span>
+            <span class="pl-3">
+              <toggle-button color="#12A3B8" :sync="true" :labels="true" v-model="inStockMode" :value="inStockMode"/>
+            </span></div>
         </b-col>
       </div>
       <div class="row mt-3">
@@ -50,7 +57,17 @@
           </b-input-group>
         </b-col>
       </div>
-      <div class="row mt-3">
+      <div class="row  mt-4">
+        <b-col></b-col>
+        <b-col></b-col>
+        <b-col class="justify-center">
+          <div style="text-align:center">
+            <b-button variant="info" class="mb-2">
+              <b-icon icon="plus-circle"></b-icon> 新增產品
+            </b-button></div>
+        </b-col>
+      </div>
+      <div class="row mt-2">
         <b-col>
           <b-table
               class="text-center text-nowrap pre-wrap"
@@ -79,7 +96,7 @@
 </template>
 
 <script>
-import {onBeforeMount, onMounted, reactive} from "@vue/composition-api/dist/vue-composition-api";
+import {onBeforeMount, onMounted, reactive,ref} from "@vue/composition-api/dist/vue-composition-api";
 import $UseAxios from '@/services/common.req';
 
 export default {
@@ -97,20 +114,23 @@ export default {
 
     const mainTableObj = reactive({
       'fields': [
-        {label: '商品照片', key: 'pic', sortable:false, thClass:'align-middle'},
-        {label: '商品狀態', key: 'state', sortable:false, thClass:'align-middle'},
-        {label: '內部編號', key: 'no', sortable:false, thClass:'align-middle'},
-        {label: '商品名稱', key: 'name', sortable:false, thClass:'align-middle'},
-        {label: '', key: 'sizeAndColor', sortable:false},
-        {label: '', key: 'supplier', sortable:false, thClass:'align-middle'},
-        {label: '商品售價', key: 'price', sortable:false, thClass:'align-middle'},
-        {label: '促銷方案', key: 'promo', sortable:false, thClass:'align-middle'},
-        {label: '標籤', key: 'tag', sortable:false, thClass:'align-middle'},
-        {label: '編輯', key: 'edit', sortable:false, thClass:'align-middle'},
+        {label: '商品照片', key: 'pic', sortable: false, thClass: 'align-middle'},
+        {label: '商品狀態', key: 'state', sortable: false, thClass: 'align-middle'},
+        {label: '內部編號', key: 'no', sortable: false, thClass: 'align-middle'},
+        {label: '商品名稱', key: 'name', sortable: false, thClass: 'align-middle'},
+        {label: '', key: 'sizeAndColor', sortable: false},
+        {label: '', key: 'supplier', sortable: false, thClass: 'align-middle'},
+        {label: '商品售價', key: 'price', sortable: false, thClass: 'align-middle'},
+        {label: '促銷方案', key: 'promo', sortable: false, thClass: 'align-middle'},
+        {label: '標籤', key: 'tag', sortable: false, thClass: 'align-middle'},
+        {label: '編輯', key: 'edit', sortable: false, thClass: 'align-middle'},
       ],
     })
 
+    const inStockMode=ref(false);
+
     return {
+      inStockMode,
       mainTableObj
     }
   },
