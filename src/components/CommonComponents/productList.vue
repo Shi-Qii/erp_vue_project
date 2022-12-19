@@ -3,36 +3,35 @@
     <div style="background-color: white; border-radius: 10px;"
          class=" col-12 mt-3 pt-3 mb-3 pb-3 justify-content-md-center">
       <div class="row">
-        <b-col>
-          <span class="text-center">
-            <b-button variant="secondary">
+        <b-col class="justify-center">
+          <div style="text-align:center">
+            <b-button variant="secondary" size="sm">
               全部
               <b-badge variant="light">90</b-badge>
             </b-button>
-          </span>
-          <span class="text-center ml-2">
-            <b-button variant="light">
+            <b-button variant="light" size="sm" class="text-center ml-2">
               上架
               <b-badge variant="light">9</b-badge>
             </b-button>
-          </span>
-          <span class="text-center ml-2">
-            <b-button variant="light">
+            <b-button variant="light" size="sm" class="text-center ml-2">
               下架
               <b-badge variant="light">9</b-badge>
             </b-button>
-          </span></b-col>
+          </div>
+        </b-col>
+        <b-col></b-col>
         <b-col></b-col>
         <b-col class="justify-center">
           <div style="text-align:center">
             <span>庫存模式</span>
             <span class="pl-3">
               <toggle-button color="#12A3B8" :sync="true" :labels="true" v-model="inStockMode" :value="inStockMode"/>
-            </span></div>
+            </span>
+          </div>
         </b-col>
       </div>
       <div class="row mt-3">
-        <b-col class="col-md-4">
+        <b-col class="col-md-3">
           <b-input-group class="mb-2">
             <b-input-group-prepend is-text>
               <b-icon icon="search"></b-icon>
@@ -40,7 +39,15 @@
             <b-form-input type="text" placeholder="全表..." autocomplete="off"></b-form-input>
           </b-input-group>
         </b-col>
-        <b-col class="col-md-4">
+        <b-col class="col-md-3">
+          <b-input-group class="mb-2">
+            <b-input-group-prepend is-text>
+              <b-icon icon="shop"></b-icon>
+            </b-input-group-prepend>
+            <b-form-input type="text" placeholder="廠商..." autocomplete="off"></b-form-input>
+          </b-input-group>
+        </b-col>
+        <b-col class="col-md-3">
           <b-input-group class="mb-2">
             <b-input-group-prepend is-text>
               <b-icon icon="tags"></b-icon>
@@ -48,7 +55,7 @@
             <b-form-input type="text" placeholder="標籤..." autocomplete="off"></b-form-input>
           </b-input-group>
         </b-col>
-        <b-col class="col-md-4">
+        <b-col class="col-md-3">
           <b-input-group class="mb-2">
             <b-input-group-prepend is-text>
               <b-icon icon="cash"></b-icon>
@@ -57,14 +64,17 @@
           </b-input-group>
         </b-col>
       </div>
-      <div class="row  mt-4">
+      <div class="row  mt-5">
+        <b-col></b-col>
         <b-col></b-col>
         <b-col></b-col>
         <b-col class="justify-center">
           <div style="text-align:center">
-            <b-button variant="info" class="mb-2">
-              <b-icon icon="plus-circle"></b-icon> 新增產品
-            </b-button></div>
+            <b-button variant="info" class="mb-3">
+              <b-icon icon="plus-circle"></b-icon>
+              新增產品
+            </b-button>
+          </div>
         </b-col>
       </div>
       <div class="row mt-2">
@@ -78,6 +88,7 @@
               sticky-header="1000px"
               responsive
               v-if="inStockMode==false"
+              fixed
           >
             <template #head(no)>
               <span>內部編號</span>
@@ -98,6 +109,7 @@
               sticky-header="1000px"
               responsive
               v-if="inStockMode==true"
+              fixed
           >
             <template #head(no)>
               <span>內部編號</span>
@@ -114,15 +126,15 @@
       <div class="row mt-2">
         <b-col>
           <div class="mt-3">
-            <b-pagination v-model="currentPage" :total-rows="rows" align="center"></b-pagination>
           </div>
-        </b-col> </div>
+        </b-col>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import {onBeforeMount, onMounted, reactive,ref} from "@vue/composition-api/dist/vue-composition-api";
+import {onBeforeMount, onMounted, reactive, ref} from "@vue/composition-api/dist/vue-composition-api";
 import $UseAxios from '@/services/common.req';
 
 export default {
@@ -167,11 +179,11 @@ export default {
       ],
     })
 
-    const inStockMode=ref(false);
+    const inStockMode = ref(false);
 
     return {
       inStockMode,
-      mainTableObj,inStockTableObj,
+      mainTableObj, inStockTableObj,
     }
   },
 }
