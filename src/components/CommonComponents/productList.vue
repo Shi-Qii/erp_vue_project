@@ -4,30 +4,18 @@
          class=" col-12 mt-3 pt-3 mb-3 pb-3 justify-content-md-center">
       <div class="row">
         <b-col class="justify-center">
-          <div style="text-align:center">
-            <b-button variant="secondary" size="sm">
-              全部
-              <b-badge variant="light">90</b-badge>
-            </b-button>
-            <b-button variant="light" size="sm" class="text-center ml-2">
-              上架
-              <b-badge variant="light">9</b-badge>
-            </b-button>
-            <b-button variant="light" size="sm" class="text-center ml-2">
-              下架
-              <b-badge variant="light">9</b-badge>
-            </b-button>
-          </div>
-        </b-col>
-        <b-col></b-col>
-        <b-col></b-col>
-        <b-col class="justify-center">
-          <div style="text-align:center">
-            <span>庫存模式</span>
-            <span class="pl-3">
-              <toggle-button color="#12A3B8" :sync="true" :labels="true" v-model="inStockMode" :value="inStockMode"/>
-            </span>
-          </div>
+          <b-button variant="secondary" size="sm">
+            全部
+            <b-badge variant="light">1900</b-badge>
+          </b-button>
+          <b-button variant="light" size="sm" class="text-center ml-2">
+            上架
+            <b-badge variant="light">900</b-badge>
+          </b-button>
+          <b-button variant="light" size="sm" class="text-center ml-2">
+            下架
+            <b-badge variant="light">9</b-badge>
+          </b-button>
         </b-col>
       </div>
       <div class="row mt-3">
@@ -65,11 +53,18 @@
         </b-col>
       </div>
       <div class="row  mt-5">
+        <b-col>
+          <div class="mt-4">
+          <span>庫存模式</span>
+          <span class="pl-3 ">
+              <toggle-button color="#12A3B8" :sync="true" :labels="true" v-model="inStockMode" :value="inStockMode"/>
+            </span>
+          </div>
+        </b-col>
         <b-col></b-col>
         <b-col></b-col>
-        <b-col></b-col>
-        <b-col class="justify-center">
-          <div style="text-align:center">
+        <b-col>
+          <div class="mt-2 float-right">
             <b-button variant="info" class="mb-3">
               <b-icon icon="plus-circle"></b-icon>
               新增產品
@@ -77,7 +72,7 @@
           </div>
         </b-col>
       </div>
-      <div class="row mt-2">
+      <div class="row">
         <b-col>
           <b-table
               class="text-center text-nowrap pre-wrap"
