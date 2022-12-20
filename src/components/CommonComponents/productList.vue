@@ -41,6 +41,10 @@
                 <b-form-checkbox class="mb-3">廠商2</b-form-checkbox>
                 <b-form-checkbox class="mb-3">廠商3</b-form-checkbox>
               </b-dropdown-form>
+              <template #button-content>
+                <b-icon icon="shop"></b-icon> &nbsp;
+                廠商... &nbsp;
+              </template>
             </b-dropdown>
           <b-card class="mt-2">
             <b-card-text class="small text-muted">
@@ -57,6 +61,10 @@
               <b-form-checkbox class="mb-3">標籤2</b-form-checkbox>
               <b-form-checkbox class="mb-3">標籤3</b-form-checkbox>
             </b-dropdown-form>
+            <template #button-content>
+              <b-icon icon="tag"></b-icon> &nbsp;
+              標籤... &nbsp;
+            </template>
           </b-dropdown>
           <b-card class="mt-2">
             <b-card-text class="small text-muted">
@@ -73,6 +81,10 @@
               <b-form-checkbox class="mb-3">促銷2</b-form-checkbox>
               <b-form-checkbox class="mb-3">促銷3</b-form-checkbox>
             </b-dropdown-form>
+            <template #button-content>
+              <b-icon icon="cash"></b-icon> &nbsp;
+              促銷... &nbsp;
+            </template>
           </b-dropdown>
           <b-card class="mt-2">
             <b-card-text class="small text-muted">
