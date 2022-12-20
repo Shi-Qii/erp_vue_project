@@ -24,39 +24,70 @@
             <b-input-group-prepend is-text>
               <b-icon icon="search"></b-icon>
             </b-input-group-prepend>
-            <b-form-input type="text" placeholder="全表..." autocomplete="off"></b-form-input>
+            <b-form-input type="text" placeholder="搜尋..." autocomplete="off" v-model="searchValue"></b-form-input>
           </b-input-group>
+          <b-card class="mt-2">
+              <b-card-text class="small text-muted">
+                <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
+                <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
+                <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
+              </b-card-text>
+          </b-card>
         </b-col>
         <b-col class="col-md-3">
-          <b-input-group class="mb-2">
-            <b-input-group-prepend is-text>
-              <b-icon icon="shop"></b-icon>
-            </b-input-group-prepend>
-            <b-form-input type="text" placeholder="廠商..." autocomplete="off"></b-form-input>
-          </b-input-group>
+            <b-dropdown text="廠商..." ref="dropdown" variant="outline-secondary" block>
+              <b-dropdown-form>
+                <b-form-checkbox class="mb-3">廠商1</b-form-checkbox>
+                <b-form-checkbox class="mb-3">廠商2</b-form-checkbox>
+                <b-form-checkbox class="mb-3">廠商3</b-form-checkbox>
+              </b-dropdown-form>
+            </b-dropdown>
+          <b-card class="mt-2">
+            <b-card-text class="small text-muted">
+              <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
+              <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
+              <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
+            </b-card-text>
+          </b-card>
         </b-col>
         <b-col class="col-md-3">
-          <b-input-group class="mb-2">
-            <b-input-group-prepend is-text>
-              <b-icon icon="tags"></b-icon>
-            </b-input-group-prepend>
-            <b-form-input type="text" placeholder="標籤..." autocomplete="off"></b-form-input>
-          </b-input-group>
+          <b-dropdown text="標籤..." ref="dropdown" variant="outline-secondary" block>
+            <b-dropdown-form>
+              <b-form-checkbox class="mb-3">標籤1</b-form-checkbox>
+              <b-form-checkbox class="mb-3">標籤2</b-form-checkbox>
+              <b-form-checkbox class="mb-3">標籤3</b-form-checkbox>
+            </b-dropdown-form>
+          </b-dropdown>
+          <b-card class="mt-2">
+            <b-card-text class="small text-muted">
+              <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
+              <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
+              <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
+            </b-card-text>
+          </b-card>
         </b-col>
         <b-col class="col-md-3">
-          <b-input-group class="mb-2">
-            <b-input-group-prepend is-text>
-              <b-icon icon="cash"></b-icon>
-            </b-input-group-prepend>
-            <b-form-input type="text" placeholder="促銷..." autocomplete="off"></b-form-input>
-          </b-input-group>
+          <b-dropdown text="促銷..." ref="dropdown" variant="outline-secondary" block>
+            <b-dropdown-form>
+              <b-form-checkbox class="mb-3">促銷2</b-form-checkbox>
+              <b-form-checkbox class="mb-3">促銷2</b-form-checkbox>
+              <b-form-checkbox class="mb-3">促銷3</b-form-checkbox>
+            </b-dropdown-form>
+          </b-dropdown>
+          <b-card class="mt-2">
+            <b-card-text class="small text-muted">
+              <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
+              <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
+              <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
+            </b-card-text>
+          </b-card>
         </b-col>
       </div>
       <div class="row  mt-5">
         <b-col>
           <div class="mt-4">
-          <span>庫存模式</span>
-          <span class="pl-3 ">
+            <span>庫存模式</span>
+            <span class="pl-3 ">
               <toggle-button color="#12A3B8" :sync="true" :labels="true" v-model="inStockMode" :value="inStockMode"/>
             </span>
           </div>
@@ -175,10 +206,12 @@ export default {
     })
 
     const inStockMode = ref(false);
+    const searchValue = ref();
 
     return {
       inStockMode,
       mainTableObj, inStockTableObj,
+      searchValue
     }
   },
 }
