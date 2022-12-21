@@ -36,7 +36,9 @@
         <b-col class="col-md-3">
           <b-dropdown text="廠商..." ref="dropdown" variant="outline-secondary" block>
             <b-dropdown-form>
-              <b-form-checkbox class="mb-3" v-for="(obj,i) in filterObj.supplierFilter" :key="i" v-model="obj.select" > &nbsp;&nbsp; {{obj.supplierName}}</b-form-checkbox>
+              <b-form-checkbox class="mb-3" v-for="(obj,i) in filterObj.supplierFilter" :key="i" v-model="obj.select">
+                &nbsp;&nbsp; {{ obj.supplierName }}
+              </b-form-checkbox>
             </b-dropdown-form>
             <template #button-content>
               <b-icon icon="shop"></b-icon> &nbsp;&nbsp;
@@ -44,15 +46,19 @@
             </template>
           </b-dropdown>
           <b-card class="mt-2" v-if="supplierComputed.length>0">
-            <b-card-text class="small text-muted" >
-              <b-badge href="#" variant="secondary" class="ml-2" v-for="(obj,i) in supplierComputed" :key="i" >{{obj.supplierName}}</b-badge>
+            <b-card-text class="small text-muted">
+              <b-badge href="#" variant="secondary" class="ml-2" v-for="(obj,i) in supplierComputed" :key="i">
+                {{ obj.supplierName }}
+              </b-badge>
             </b-card-text>
           </b-card>
         </b-col>
         <b-col class="col-md-3">
           <b-dropdown text="促銷..." ref="dropdown" variant="outline-secondary" block>
             <b-dropdown-form>
-              <b-form-checkbox class="mb-3" v-for="(obj,i) in filterObj.promoFilter" :key="i" v-model="obj.select" > &nbsp;&nbsp; {{obj.salesName}}-{{obj.salesInfo}}</b-form-checkbox>
+              <b-form-checkbox class="mb-3" v-for="(obj,i) in filterObj.promoFilter" :key="i" v-model="obj.select">
+                &nbsp;&nbsp; {{ obj.salesName }}-{{ obj.salesInfo }}
+              </b-form-checkbox>
             </b-dropdown-form>
             <template #button-content>
               <b-icon icon="cash"></b-icon> &nbsp;&nbsp;
@@ -61,14 +67,28 @@
           </b-dropdown>
           <b-card class="mt-2" v-if="promoComputed.length>0">
             <b-card-text class="small text-muted">
-              <b-badge href="#" variant="secondary" class="ml-2" v-for="(obj,i) in promoComputed" :key="i">{{obj.salesName}}-{{obj.salesInfo}}</b-badge>
+              <b-badge href="#" variant="secondary" class="ml-2" v-for="(obj,i) in promoComputed" :key="i">
+                {{ obj.salesName }}-{{ obj.salesInfo }}
+              </b-badge>
             </b-card-text>
           </b-card>
         </b-col>
         <b-col class="col-md-3">
           <b-dropdown text="標籤..." ref="dropdown" variant="outline-secondary" block>
             <b-dropdown-form>
-              <b-form-checkbox class="mb-3" v-for="(obj,i) in filterObj.tagFilter" :key="i" v-model="obj.select" > &nbsp;&nbsp; {{obj.tagName}}</b-form-checkbox>
+              <b-form-checkbox class="mb-3" v-for="(obj,i) in filterObj.tagFilter" :key="i" v-model="obj.select"> &nbsp;&nbsp;
+                {{ obj.tagName }}
+              </b-form-checkbox>
+              <hr>
+              <b-input-group
+                  size="sm"
+                  class="mb-3"
+              >
+                <b-form-input></b-form-input>
+                <b-input-group-append>
+                  <b-button size="sm" text="Button" variant="outline-secondary" class="ml-1">add</b-button>
+                </b-input-group-append>
+              </b-input-group>
             </b-dropdown-form>
             <template #button-content>
               <b-icon icon="tag"></b-icon> &nbsp;&nbsp;
@@ -77,7 +97,10 @@
           </b-dropdown>
           <b-card class="mt-2" v-if="tagComputed.length>0">
             <b-card-text class="small text-muted">
-              <b-badge href="#" variant="secondary" class="ml-2" v-for="(obj,i) in tagComputed" :key="i">{{ obj.tagName }}</b-badge>
+              <b-badge href="#" variant="secondary" class="ml-2" v-for="(obj,i) in tagComputed" :key="i">{{
+                  obj.tagName
+                }}
+              </b-badge>
             </b-card-text>
           </b-card>
         </b-col>
@@ -253,20 +276,20 @@ export default {
       return filterObj.searchFilter;
     })
     const supplierComputed = computed(() => {
-      return filterObj.supplierFilter.filter(f=>f.select===true)
+      return filterObj.supplierFilter.filter(f => f.select === true)
     })
     const promoComputed = computed(() => {
-      return filterObj.promoFilter.filter(f=>f.select===true)
+      return filterObj.promoFilter.filter(f => f.select === true)
     })
     const tagComputed = computed(() => {
-      return filterObj.tagFilter.filter(f=>f.select===true)
+      return filterObj.tagFilter.filter(f => f.select === true)
     })
 
     return {
       inStockMode,
       mainTableObj, inStockTableObj,
       filterObj, searchValue,
-      searchComputed,supplierComputed,promoComputed,tagComputed
+      searchComputed, supplierComputed, promoComputed, tagComputed
     }
   },
 }
