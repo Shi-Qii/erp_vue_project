@@ -26,71 +26,58 @@
             </b-input-group-prepend>
             <b-form-input type="text" placeholder="搜尋..." autocomplete="off" v-model="searchValue"></b-form-input>
           </b-input-group>
-          <b-card class="mt-2">
-              <b-card-text class="small text-muted">
-                <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
-                <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
-                <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
-              </b-card-text>
-          </b-card>
-        </b-col>
-        <b-col class="col-md-3">
-            <b-dropdown text="廠商..." ref="dropdown" variant="outline-secondary" block>
-              <b-dropdown-form>
-                <b-form-checkbox class="mb-3">廠商1</b-form-checkbox>
-                <b-form-checkbox class="mb-3">廠商2</b-form-checkbox>
-                <b-form-checkbox class="mb-3">廠商3</b-form-checkbox>
-              </b-dropdown-form>
-              <template #button-content>
-                <b-icon icon="shop"></b-icon> &nbsp;
-                廠商... &nbsp;
-              </template>
-            </b-dropdown>
-          <b-card class="mt-2">
+          <b-card class="mt-2" v-if="searchComputed.length>0">
             <b-card-text class="small text-muted">
-              <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
-              <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
-              <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
+              <b-badge href="#" variant="secondary" class="ml-2" v-for="(str,i) in searchComputed" :key="i">{{ str }}
+              </b-badge>
             </b-card-text>
           </b-card>
         </b-col>
         <b-col class="col-md-3">
-          <b-dropdown text="標籤..." ref="dropdown" variant="outline-secondary" block>
+          <b-dropdown text="廠商..." ref="dropdown" variant="outline-secondary" block>
             <b-dropdown-form>
-              <b-form-checkbox class="mb-3">標籤1</b-form-checkbox>
-              <b-form-checkbox class="mb-3">標籤2</b-form-checkbox>
-              <b-form-checkbox class="mb-3">標籤3</b-form-checkbox>
+              <b-form-checkbox class="mb-3" v-for="(obj,i) in filterObj.supplierFilter" :key="i" v-model="obj.select" > &nbsp;&nbsp; {{obj.supplierName}}</b-form-checkbox>
             </b-dropdown-form>
             <template #button-content>
-              <b-icon icon="tag"></b-icon> &nbsp;
-              標籤... &nbsp;
+              <b-icon icon="shop"></b-icon> &nbsp;&nbsp;
+              廠商... &nbsp;
             </template>
           </b-dropdown>
-          <b-card class="mt-2">
-            <b-card-text class="small text-muted">
-              <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
-              <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
-              <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
+          <b-card class="mt-2" v-if="supplierComputed.length>0">
+            <b-card-text class="small text-muted" >
+              <b-badge href="#" variant="secondary" class="ml-2" v-for="(obj,i) in supplierComputed" :key="i" >{{obj.supplierName}}</b-badge>
             </b-card-text>
           </b-card>
         </b-col>
         <b-col class="col-md-3">
           <b-dropdown text="促銷..." ref="dropdown" variant="outline-secondary" block>
             <b-dropdown-form>
-              <b-form-checkbox class="mb-3">促銷2</b-form-checkbox>
-              <b-form-checkbox class="mb-3">促銷2</b-form-checkbox>
-              <b-form-checkbox class="mb-3">促銷3</b-form-checkbox>
+              <b-form-checkbox class="mb-3" v-for="(obj,i) in filterObj.promoFilter" :key="i" v-model="obj.select" > &nbsp;&nbsp; {{obj.salesName}}-{{obj.salesInfo}}</b-form-checkbox>
             </b-dropdown-form>
             <template #button-content>
-              <b-icon icon="cash"></b-icon> &nbsp;
+              <b-icon icon="cash"></b-icon> &nbsp;&nbsp;
               促銷... &nbsp;
             </template>
           </b-dropdown>
-          <b-card class="mt-2">
+          <b-card class="mt-2" v-if="promoComputed.length>0">
             <b-card-text class="small text-muted">
-              <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
-              <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
-              <b-badge href="#" variant="secondary" class="ml-2">Secondary</b-badge>
+              <b-badge href="#" variant="secondary" class="ml-2" v-for="(obj,i) in promoComputed" :key="i">{{obj.salesName}}-{{obj.salesInfo}}</b-badge>
+            </b-card-text>
+          </b-card>
+        </b-col>
+        <b-col class="col-md-3">
+          <b-dropdown text="標籤..." ref="dropdown" variant="outline-secondary" block>
+            <b-dropdown-form>
+              <b-form-checkbox class="mb-3" v-for="(obj,i) in filterObj.tagFilter" :key="i" v-model="obj.select" > &nbsp;&nbsp; {{obj.tagName}}</b-form-checkbox>
+            </b-dropdown-form>
+            <template #button-content>
+              <b-icon icon="tag"></b-icon> &nbsp;&nbsp;
+              標籤... &nbsp;
+            </template>
+          </b-dropdown>
+          <b-card class="mt-2" v-if="tagComputed.length>0">
+            <b-card-text class="small text-muted">
+              <b-badge href="#" variant="secondary" class="ml-2" v-for="(obj,i) in tagComputed" :key="i">{{ obj.tagName }}</b-badge>
             </b-card-text>
           </b-card>
         </b-col>
@@ -172,7 +159,7 @@
 </template>
 
 <script>
-import {onBeforeMount, onMounted, reactive, ref} from "@vue/composition-api/dist/vue-composition-api";
+import {computed, onBeforeMount, onMounted, reactive, ref} from "@vue/composition-api/dist/vue-composition-api";
 import $UseAxios from '@/services/common.req';
 
 export default {
@@ -186,6 +173,35 @@ export default {
       });
     })
     onBeforeMount(() => {
+      let stateNum = [
+        {name: 'all', num: 2500, select: true},
+        {name: 'onShelf', num: 2000, select: true},
+        {name: 'offShelf', num: 500, select: true}];
+      filterObj.state = stateNum;
+      let supplierInfo = [
+        {supplierName: '廠商1abc', supplierId: '001', select: false},
+        {supplierName: '廠商2mm', supplierId: '002', select: false},
+        {supplierName: '廠商3', supplierId: '003', select: false},
+        {supplierName: '廠商4', supplierId: '004', select: false},
+        {supplierName: '廠商5', supplierId: '005', select: false}];
+      filterObj.supplierFilter = supplierInfo;
+      let promoInfo = [
+        {salesId: '001', salesName: '換季大拍賣', salesInfo: '商品95折', select: false},
+        {salesId: '002', salesName: '年末出清', salesInfo: '全面200元', select: false},
+        {salesId: '003', salesName: '特價', salesInfo: '商品8折', select: false},
+        {salesId: '004', salesName: '不想賣了', salesInfo: '全面10元', select: false},
+        {salesId: '005', salesName: '成本賣', salesInfo: '全面50元', select: false},
+        {salesId: '006', salesName: '降價', salesInfo: '全面20元', select: false},];
+      filterObj.promoFilter = promoInfo;
+      let tagInfo = [
+        {tagId: '001', tagName: '20221220-追加', select: false},
+        {tagId: '002', tagName: '20221221-追加', select: false},
+        {tagId: '003', tagName: '20221222-追加', select: false},
+        {tagId: '004', tagName: '20221223-追加', select: false},
+        {tagId: '005', tagName: '20221224-追加', select: false},
+        {tagId: '006', tagName: '20221225-追加', select: false},
+      ];
+      filterObj.tagFilter = tagInfo;
     });
 
     const mainTableObj = reactive({
@@ -218,12 +234,39 @@ export default {
     })
 
     const inStockMode = ref(false);
-    const searchValue = ref();
+    const filterObj = reactive({
+      state: [],
+      searchFilter: [],
+      supplierFilter: [],
+      promoFilter: [],
+      tagFilter: [],
+    })
+    const searchValue = ref('');
+    const searchComputed = computed(() => {
+      filterObj.searchFilter = [];
+      let searchVal = searchValue.value.trim().length > 0 ? searchValue.value.trim().split(' ') : [];
+      searchVal.forEach(f => {
+        if (searchVal.length > 0 && !filterObj.searchFilter.includes(f)) {
+          filterObj.searchFilter.push(f)
+        }
+      })
+      return filterObj.searchFilter;
+    })
+    const supplierComputed = computed(() => {
+      return filterObj.supplierFilter.filter(f=>f.select===true)
+    })
+    const promoComputed = computed(() => {
+      return filterObj.promoFilter.filter(f=>f.select===true)
+    })
+    const tagComputed = computed(() => {
+      return filterObj.tagFilter.filter(f=>f.select===true)
+    })
 
     return {
       inStockMode,
       mainTableObj, inStockTableObj,
-      searchValue
+      filterObj, searchValue,
+      searchComputed,supplierComputed,promoComputed,tagComputed
     }
   },
 }
