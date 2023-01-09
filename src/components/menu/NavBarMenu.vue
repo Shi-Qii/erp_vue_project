@@ -34,23 +34,30 @@
           </div>
         </li>
         <li class="nav-item ">
-          <a class="nav-link TheSameFontColor">
+          <a class="nav-link TheSameFontColor" href @click.prevent="logOut">
             <font-awesome-icon icon="sign-out-alt"/>
             LogOut
           </a>
         </li>
+
         <div v-if="!currentUser" class="navbar-nav ml-auto">
           <li>
-            <a class="nav-link TheSameFontColor">
-              <font-awesome-icon icon="sign-out-alt"/>
-              LogIn
-            </a>
+            <router-link to="/LoginPage" class="nav-link">
+              <a class="nav-link TheSameFontColor">
+                <font-awesome-icon icon="sign-out-alt"/>
+                LogIn
+              </a>
+            </router-link>
+
           </li>
           <li>
-            <a class="nav-link TheSameFontColor">
-              <font-awesome-icon icon="sign-out-alt"/>
-              RegisterPage
-            </a>
+            <router-link to="/RegisterPage" class="nav-link">
+              <a class="nav-link TheSameFontColor">
+                <font-awesome-icon icon="sign-out-alt"/>
+                RegisterPage
+              </a>
+            </router-link>
+
           </li>
         </div>
       </div>
@@ -64,9 +71,14 @@ export default {
   name: "navBarMenu",
   computed: {
     currentUser() {
-      console.log('this.$store>>',this.$store);
+      console.log('this.$store>>', this.$store);
       return this.$store.state.auth.user;
-    }
+    }, methods: {
+      logOut() {
+        this.$store.dispatch("auth/logout");
+        this.$router.push("/LoginPage");
+      },
+    },
   }
 }
 

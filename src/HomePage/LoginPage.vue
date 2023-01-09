@@ -84,22 +84,21 @@ export default {
           this.loading = false;
           return;
         }
-        // if (this.user.username && this.user.password) {
-        //   this.$store.dispatch('auth/login', this.user).then(
-        //       () => {
-        //         this.$router.push('/PersonalProfile');
-        //       },
-        //       error => {
-        //         this.loading = false;
-        //         this.message =
-        //             (error.response && error.response.data) ||
-        //             error.message ||
-        //             error.toString();
-        //       }
-        //   );
-        // }
+        if (this.user.username && this.user.password) {
+          this.$store.dispatch('auth/login', this.user).then(
+              () => {
+                this.$router.push('/PersonalProfile');
+              },
+              error => {
+                this.loading = false;
+                this.message =
+                    (error.response && error.response.data) ||
+                    error.message ||
+                    error.toString();
+              }
+          );
+        }
       });
-      this.$router.push('/PersonalProfile');
 
     }
   }
