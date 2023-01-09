@@ -4,6 +4,7 @@ import Home from './HomePage/home.vue';
 
 
 Vue.use(Router);
+
 /**
  * 統一由這兩修改
  */
@@ -42,6 +43,20 @@ export const router = new Router({
             path: domainName + 'ErrorPage',
             name: 'ErrorPage',
             component: () => import('@/ErrorPage/ErrorPage.vue')
+        },
+        {
+            path: domainName + 'LoginPage',
+            name: 'LoginPage',
+            component: () => import('@/HomePage/LoginPage.vue')
+        },
+        {
+            path: domainName + 'RegisterPage',
+            name: 'RegisterPage',
+            component: () => import('@/HomePage/RegisterPage')
+        }, {
+            path: domainName + 'PersonalProfile',
+            name: 'PersonalProfile',
+            component: () => import('@/PersonalCenter/PersonalProfile')
         },
         {
             path: domainName + 'ProductList',

@@ -164,6 +164,7 @@
           4.利潤調整＆顏色tag 存前端<br>
           5.廠商-下拉選單<br>
         </p>
+
       </div>
     </div>
     <b-modal ref="newItem-modal" size="xl" hide-footer scrollable title="新增規格">
@@ -377,17 +378,17 @@
 
 <script>
 import {computed, onBeforeMount, onMounted, reactive, ref} from "@vue/composition-api/dist/vue-composition-api";
-import $UseAxios from '@/services/common.req';
+// import $UseAxios from '@/services/common.req';
 
 export default {
   name: "upsertProductPage",
-  components: {},
+  components: {
+
+  },
   setup() {
     onMounted(() => {
       //統一命名$UseAxios
-      $UseAxios.Get('https://hishowme.azurewebsites.net/showme/hello').then((res) => {
-        console.log('res:', res.data);
-      });
+
     })
     onBeforeMount(() => {
 
@@ -746,8 +747,13 @@ export default {
         });
       }
     }
+    const pageChange = (pInfo) => {
 
+        console.log(pInfo) // { pageNumber: 1, pageSize: 10 }
+      }
+    const totalRow =ref(10);
     return {
+      totalRow,pageChange,
       generateImage, noImageButton, mainPic, editImageButton, chosePic, thisPhoto,
       add, count, ObjectItem,
       fileList,
